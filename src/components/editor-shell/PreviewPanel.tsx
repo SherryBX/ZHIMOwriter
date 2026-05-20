@@ -1,19 +1,34 @@
+import { type RefObject } from "react";
 import PreviewPhone from "./PreviewPhone";
 import type { ThemeId } from "../../themes/themes";
 
 type PreviewPanelProps = {
   markdown: string;
   theme: ThemeId;
+  scrollRef: RefObject<HTMLDivElement | null>;
+  onScroll: () => void;
 };
 
-function PreviewPanel({ markdown, theme }: PreviewPanelProps) {
+function PreviewPanel({ markdown, theme, scrollRef, onScroll }: PreviewPanelProps) {
   return (
-    <section className="preview-panel" aria-label="\u516c\u4f17\u53f7\u9884\u89c8\u533a">
+    <section className="preview-panel" aria-label="公众号预览区">
       <div className="panel-heading">
         <p className="panel-kicker">PREVIEW</p>
         <h2>{"\u5fae\u4fe1\u6587\u7ae0\u9884\u89c8"}</h2>
       </div>
-      <PreviewPhone markdown={markdown} theme={theme} />
+      <div className="preview-surface">
+        <div className="preview-surface__topbar">
+          <span>preview</span>
+          <span>wechat ready</span>
+        </div>
+        <div 
+          className="preview-surface__content"
+          ref={scrollRef}
+          onScroll={onScroll}
+        >
+          <PreviewPhone markdown={markdown} theme={theme} />
+        </div>
+      </div>
     </section>
   );
 }

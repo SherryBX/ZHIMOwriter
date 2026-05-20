@@ -156,9 +156,8 @@ export function normalizeMarkdownForRender(markdown: string) {
     });
 }
 
-import { getTheme, type ThemeId } from "../themes/themes";
 
-export function renderPreviewHtml(markdown: string, themeId: ThemeId) {
+export function renderPreviewHtml(markdown: string, themeId: ThemeId = "classic") {
   const normalized = normalizeMarkdownForRender(markdown);
   const content = previewMarkdown.render(normalized);
   const theme = getTheme(themeId);
@@ -175,7 +174,7 @@ export function renderPreviewHtml(markdown: string, themeId: ThemeId) {
   return decoratePreviewMarkup(`${topTag}${topDivider}${content}`);
 }
 
-export function renderStandardMarkdownHtml(markdown: string, themeId: ThemeId) {
+export function renderStandardMarkdownHtml(markdown: string, themeId: ThemeId = "classic") {
   const normalized = normalizeMarkdownForRender(markdown);
   const content = standardMarkdown.render(normalized);
   const theme = getTheme(themeId);

@@ -1,4 +1,4 @@
-import { useDeferredValue, useEffect, useState } from "react";
+import { useDeferredValue, useEffect, useRef, useState } from "react";
 import AppHeader from "./components/editor-shell/AppHeader";
 import EditorWorkspace from "./components/editor-shell/EditorWorkspace";
 import PreviewPanel from "./components/editor-shell/PreviewPanel";
@@ -26,6 +26,32 @@ function App() {
   const [copyButtonLabel, setCopyButtonLabel] = useState(defaultCopyButtonLabel);
   const [theme, setTheme] = useState<ThemeId>(() => readPersistedTheme());
   const deferredMarkdown = useDeferredValue(markdown);
+
+  const editorScrollRef = useRef<HTMLTextAreaElement>(null);
+  const previewScrollRef = useRef<HTMLDivElement>(null);
+  const isScrollingRef = useRef<"editor" | "preview" | null>(null);
+  const scrollTimeoutRef = useRef<number | null>(null);
+
+  const handleScroll = (source: "editor" | "preview") => {
+    if (isScrollingRef.current && isScrollingRef.current !== source) {
+      return;
+    }
+
+    const sourceEl = source === "editor" ? editorScrollRef.current : previewScrollRef.current;
+    const targetEl = source === "editor" ? previewScrollRef.current : editorScrollRef.current;
+
+    if (!sourceEl || !targetEl) return;
+
+    isScrollingRef.current = source;
+    if (scrollTimeoutRef.current) window.clearTimeout(scrollTimeoutRef.current);
+
+    const percentage = sourceEl.scrollTop / (sourceEl.scrollHeight - sourceEl.clientHeight);
+    targetEl.scrollTop = percentage * (targetEl.scrollHeight - targetEl.clientHeight);
+
+    scrollTimeoutRef.current = window.setTimeout(() => {
+      isScrollingRef.current = null;
+    }, 50) as unknown as number;
+  };
 
   useEffect(() => {
     try {
@@ -58,8 +84,18 @@ function App() {
           onThemeChange={setTheme}
         />
         <div className="editor-layout">
-          <EditorWorkspace markdown={markdown} onChange={setMarkdown} />
-          <PreviewPanel markdown={deferredMarkdown} theme={theme} />
+          <EditorWorkspace 
+            markdown={markdown} 
+            onChange={setMarkdown} 
+            scrollRef={editorScrollRef}
+            onScroll={() => handleScroll("editor")}
+          />
+          <PreviewPanel 
+            markdown={deferredMarkdown} 
+            theme={theme} 
+            scrollRef={previewScrollRef}
+            onScroll={() => handleScroll("preview")}
+          />
         </div>
       </div>
     </div>

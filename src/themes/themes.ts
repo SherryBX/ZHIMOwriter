@@ -54,7 +54,6 @@ export type ThemeSpec = {
   topDividerVisible: boolean;
   topDivider: string;
   topDividerLine: string;
-  h1MarkAfter: string | null;
   topTagLeadingBar: string | null;
   h2AutoNumber: AutoNumberSpec | null;
   h3PrefixMark: PrefixMarkSpec | null;
@@ -111,7 +110,6 @@ export const classicTheme: ThemeSpec = {
   topDividerVisible: true,
   topDivider: "margin:0 0 16px;",
   topDividerLine: "display:block;height:0;overflow:hidden;border-top:1px solid rgba(194,54,22,0.18);",
-  h1MarkAfter: null,
   topTagLeadingBar: null,
   h2AutoNumber: null,
   h3PrefixMark: null,

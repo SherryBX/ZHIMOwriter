@@ -299,12 +299,10 @@ button {
 .preview-phone__article {
   display: block;
   padding: 24px 16px 46px;
-  border: 1px solid rgba(229, 224, 216, 0.88);
-  border-radius: 12px;
-  background: #FAFAF9;
-  box-shadow:
-    0 24px 56px rgba(40, 30, 19, 0.1),
-    0 8px 18px rgba(70, 54, 38, 0.06);
+  border: none;
+  border-radius: 0;
+  background: #ffffff;
+  box-shadow: none;
 }
 
 .preview-phone__article h1,

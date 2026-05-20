@@ -139,6 +139,37 @@ button {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
+.cta-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 28px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #c23616, #a02d11);
+  color: #fff;
+  cursor: pointer;
+  margin-left: auto;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(194, 54, 22, 0.25);
+  text-decoration: none;
+}
+
+.cta-button:hover {
+  background: linear-gradient(135deg, #d43d1a, #b33413);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(194, 54, 22, 0.35);
+}
+
+.cta-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(194, 54, 22, 0.2);
+}
+
 .ghost-button:hover,
 .app-header__import:hover {
   background: #f8f6f2;

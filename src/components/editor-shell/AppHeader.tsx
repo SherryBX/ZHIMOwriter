@@ -81,16 +81,11 @@ function AppHeader({
           aria-label="导入 Markdown 文件"
           onChange={handleFileChange}
         />
-        <button
-          type="button"
-          className="ghost-button"
-          onClick={onCopyToWechat}
-          style={{ marginRight: "12px", border: "1px solid var(--border-color, #e5e5e0)" }}
-        >
-          {copyButtonLabel}
-        </button>
-        <button type="button" className="primary-button" onClick={onCopyAsImage}>
+        <button type="button" className="ghost-button" onClick={onCopyAsImage}>
           {copyImageButtonLabel}
+        </button>
+        <button type="button" className="cta-button" onClick={onCopyToWechat}>
+          {copyButtonLabel}
         </button>
       </div>
     </header>

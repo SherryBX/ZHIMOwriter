@@ -1,39 +1,40 @@
 import html2canvas from "html2canvas";
 
-/**
- * 将公众号预览区域的 DOM 节点截取为一张高清晰度 PNG 图片，并写入系统剪贴板。
- */
 export async function copyPreviewAsImage(): Promise<void> {
   const element = document.querySelector(".preview-phone__article") as HTMLElement;
   if (!element) {
     throw new Error("找不到预览区域对应的 DOM 元素");
   }
 
-  // 保存原始样式，以便截图后恢复
-  const originalBoxShadow = element.style.boxShadow;
-  const originalBorder = element.style.border;
-  const originalBorderRadius = element.style.borderRadius;
+  // 1. 创建一个克隆节点
+  const clone = element.cloneNode(true) as HTMLElement;
 
-  // 临时去除阴影、边框、圆角，使导出的图片是一张干净的内容图
-  element.style.boxShadow = "none";
-  element.style.border = "none";
-  element.style.borderRadius = "0";
+  // 2. 将克隆节点移出屏幕外，但保持可见状态以允许 html2canvas 渲染
+  clone.style.position = "absolute";
+  clone.style.left = "-9999px";
+  clone.style.top = "0";
+  clone.style.width = element.clientWidth + "px";
+  clone.style.boxShadow = "none";
+  clone.style.border = "none";
+  clone.style.borderRadius = "0";
+
+  // 3. 将克隆节点挂载到 body 下
+  document.body.appendChild(clone);
 
   try {
-    // 使用 html2canvas 进行截图
-    // scale: 2 可以保证截图是 2 倍清晰度（比如宽度从 375px 提升到 750px 视网膜清晰度）
-    const canvas = await html2canvas(element, {
+    // 4. 对克隆节点进行截图，避免影响真实的滚动容器
+    const canvas = await html2canvas(clone, {
       useCORS: true,
       allowTaint: true,
       scale: 2,
-      backgroundColor: null, // 保持与 DOM 元素自身的背景色一致
+      backgroundColor: null,
       logging: false,
+      scrollX: 0,
+      scrollY: 0,
     });
 
-    // 恢复原始样式
-    element.style.boxShadow = originalBoxShadow;
-    element.style.border = originalBorder;
-    element.style.borderRadius = originalBorderRadius;
+    // 5. 移出克隆节点
+    document.body.removeChild(clone);
 
     return new Promise<void>((resolve, reject) => {
       canvas.toBlob(
@@ -60,10 +61,10 @@ export async function copyPreviewAsImage(): Promise<void> {
       );
     });
   } catch (err) {
-    // 确保即使出错也恢复样式
-    element.style.boxShadow = originalBoxShadow;
-    element.style.border = originalBorder;
-    element.style.borderRadius = originalBorderRadius;
+    // 确保即使出错也清理克隆节点
+    if (clone.parentNode) {
+      document.body.removeChild(clone);
+    }
     throw err;
   }
 }

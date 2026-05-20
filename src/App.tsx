@@ -53,6 +53,18 @@ function App() {
     }, 50) as unknown as number;
   };
 
+  const handleWheel = (event: React.WheelEvent<HTMLElement>, source: "editor" | "preview") => {
+    const sourceEl = source === "editor" ? editorScrollRef.current : previewScrollRef.current;
+    const targetEl = source === "editor" ? previewScrollRef.current : editorScrollRef.current;
+
+    if (!sourceEl || !targetEl) return;
+
+    const isSourceScrollable = sourceEl.scrollHeight > sourceEl.clientHeight;
+    if (!isSourceScrollable) {
+      targetEl.scrollTop += event.deltaY;
+    }
+  };
+
   useEffect(() => {
     try {
       window.localStorage.setItem(themeStorageKey, theme);
@@ -89,12 +101,14 @@ function App() {
             onChange={setMarkdown} 
             scrollRef={editorScrollRef}
             onScroll={() => handleScroll("editor")}
+            onWheel={(e) => handleWheel(e, "editor")}
           />
           <PreviewPanel 
             markdown={deferredMarkdown} 
             theme={theme} 
             scrollRef={previewScrollRef}
             onScroll={() => handleScroll("preview")}
+            onWheel={(e) => handleWheel(e, "preview")}
           />
         </div>
       </div>

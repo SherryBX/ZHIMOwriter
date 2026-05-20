@@ -1,13 +1,14 @@
-import type { RefObject } from "react";
+import type { RefObject, WheelEvent } from "react";
 
 type EditorWorkspaceProps = {
   markdown: string;
   onChange: (value: string) => void;
   scrollRef: RefObject<HTMLTextAreaElement | null>;
   onScroll: () => void;
+  onWheel: (event: WheelEvent<HTMLTextAreaElement>) => void;
 };
 
-function EditorWorkspace({ markdown, onChange, scrollRef, onScroll }: EditorWorkspaceProps) {
+function EditorWorkspace({ markdown, onChange, scrollRef, onScroll, onWheel }: EditorWorkspaceProps) {
   return (
     <main className="workspace-panel" aria-label="编辑工作区">
       <div className="panel-heading">
@@ -28,6 +29,7 @@ function EditorWorkspace({ markdown, onChange, scrollRef, onScroll }: EditorWork
           value={markdown}
           onChange={(event) => onChange(event.target.value)}
           onScroll={onScroll}
+          onWheel={onWheel}
         />
       </label>
     </main>

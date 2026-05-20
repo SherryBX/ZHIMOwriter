@@ -1,4 +1,4 @@
-import { type RefObject } from "react";
+import { type RefObject, type WheelEvent } from "react";
 import PreviewPhone from "./PreviewPhone";
 import type { ThemeId } from "../../themes/themes";
 
@@ -7,9 +7,10 @@ type PreviewPanelProps = {
   theme: ThemeId;
   scrollRef: RefObject<HTMLDivElement | null>;
   onScroll: () => void;
+  onWheel: (event: WheelEvent<HTMLDivElement>) => void;
 };
 
-function PreviewPanel({ markdown, theme, scrollRef, onScroll }: PreviewPanelProps) {
+function PreviewPanel({ markdown, theme, scrollRef, onScroll, onWheel }: PreviewPanelProps) {
   return (
     <section className="preview-panel" aria-label="公众号预览区">
       <div className="panel-heading">
@@ -25,6 +26,7 @@ function PreviewPanel({ markdown, theme, scrollRef, onScroll }: PreviewPanelProp
           className="preview-surface__content"
           ref={scrollRef}
           onScroll={onScroll}
+          onWheel={onWheel}
         >
           <PreviewPhone markdown={markdown} theme={theme} />
         </div>

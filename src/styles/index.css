@@ -271,12 +271,12 @@ button {
 
 .preview-phone__article {
   display: block;
-  max-width: 677px;
+  max-width: 572px;
   width: 100%;
   margin: 0 auto;
   padding: 48px 32px;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 12px;
   background: #ffffff;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
   box-sizing: border-box;

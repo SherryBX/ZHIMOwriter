@@ -5,12 +5,13 @@ import type { ThemeId } from "../../themes/themes";
 type PreviewPanelProps = {
   markdown: string;
   theme: ThemeId;
+  articleLabel: string;
   scrollRef: RefObject<HTMLDivElement | null>;
   onScroll: () => void;
   onWheel: (event: WheelEvent<HTMLDivElement>) => void;
 };
 
-function PreviewPanel({ markdown, theme, scrollRef, onScroll, onWheel }: PreviewPanelProps) {
+function PreviewPanel({ markdown, theme, articleLabel, scrollRef, onScroll, onWheel }: PreviewPanelProps) {
   return (
     <section className="preview-panel" aria-label="公众号预览区">
       <div className="panel-heading">
@@ -28,7 +29,7 @@ function PreviewPanel({ markdown, theme, scrollRef, onScroll, onWheel }: Preview
           onScroll={onScroll}
           onWheel={onWheel}
         >
-          <PreviewPhone markdown={markdown} theme={theme} />
+          <PreviewPhone markdown={markdown} theme={theme} articleLabel={articleLabel} />
         </div>
       </div>
     </section>

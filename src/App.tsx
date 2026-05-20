@@ -10,6 +10,8 @@ import ToolbarSidebar from "./components/editor-shell/ToolbarSidebar";
 
 const defaultCopyButtonLabel = "复制到公众号";
 const themeStorageKey = "zhimo:theme";
+const labelStorageKey = "zhimo:articleLabel";
+const defaultArticleLabel = "ZHIMO";
 
 function readPersistedTheme(): ThemeId {
   if (typeof window === "undefined") {
@@ -23,11 +25,23 @@ function readPersistedTheme(): ThemeId {
   }
 }
 
+function readPersistedLabel(): string {
+  if (typeof window === "undefined") {
+    return defaultArticleLabel;
+  }
+  try {
+    return window.localStorage.getItem(labelStorageKey) || defaultArticleLabel;
+  } catch {
+    return defaultArticleLabel;
+  }
+}
+
 function App() {
   const [markdown, setMarkdown] = useState(initialMarkdown);
   const [copyButtonLabel, setCopyButtonLabel] = useState(defaultCopyButtonLabel);
   const [copyImageButtonLabel, setCopyImageButtonLabel] = useState("复制为图片");
   const [theme, setTheme] = useState<ThemeId>(() => readPersistedTheme());
+  const [articleLabel, setArticleLabel] = useState<string>(() => readPersistedLabel());
   const deferredMarkdown = useDeferredValue(markdown);
 
   const editorScrollRef = useRef<HTMLTextAreaElement>(null);
@@ -76,9 +90,17 @@ function App() {
     }
   }, [theme]);
 
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(labelStorageKey, articleLabel);
+    } catch {
+      /* ignore persistence errors */
+    }
+  }, [articleLabel]);
+
   async function handleCopyToWechat() {
     try {
-      await copyWechatContent(markdown, theme);
+      await copyWechatContent(markdown, theme, undefined, articleLabel);
       setCopyButtonLabel("已复制");
       window.setTimeout(() => setCopyButtonLabel(defaultCopyButtonLabel), 1800);
     } catch {
@@ -108,10 +130,12 @@ function App() {
           copyButtonLabel={copyButtonLabel}
           copyImageButtonLabel={copyImageButtonLabel}
           themeId={theme}
+          articleLabel={articleLabel}
           onImportMarkdown={setMarkdown}
           onCopyToWechat={handleCopyToWechat}
           onCopyAsImage={handleCopyAsImage}
           onThemeChange={setTheme}
+          onArticleLabelChange={setArticleLabel}
         />
         <div className="editor-layout">
           <ToolbarSidebar
@@ -129,6 +153,7 @@ function App() {
           <PreviewPanel 
             markdown={deferredMarkdown} 
             theme={theme} 
+            articleLabel={articleLabel}
             scrollRef={previewScrollRef}
             onScroll={() => handleScroll("preview")}
             onWheel={(e) => handleWheel(e, "preview")}

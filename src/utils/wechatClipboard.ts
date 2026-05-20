@@ -483,9 +483,13 @@ function copyWithExecCommand(html: string, plainText: string) {
   }
 }
 
-export async function buildWechatHtml(markdownOrNodes: string | PreviewNode[], themeId: ThemeId = defaultThemeId) {
+export async function buildWechatHtml(
+  markdownOrNodes: string | PreviewNode[],
+  themeId: ThemeId = defaultThemeId,
+  articleLabel?: string,
+) {
   const markdown = toMarkdown(markdownOrNodes);
-  const html = renderStandardMarkdownHtml(markdown, themeId);
+  const html = renderStandardMarkdownHtml(markdown, themeId, articleLabel);
   return decorateWechatHtml(html, getTheme(themeId));
 }
 
@@ -493,6 +497,7 @@ export async function copyWechatContent(
   markdownOrNodes: string | PreviewNode[],
   markdownOrTheme?: string | ThemeId,
   themeId: ThemeId = defaultThemeId,
+  articleLabel?: string,
 ) {
   let resolvedMarkdown: string;
   let resolvedTheme: ThemeId = themeId;
@@ -504,7 +509,7 @@ export async function copyWechatContent(
     resolvedMarkdown = toMarkdown(markdownOrNodes, markdownOrTheme);
   }
 
-  const html = await buildWechatHtml(resolvedMarkdown, resolvedTheme);
+  const html = await buildWechatHtml(resolvedMarkdown, resolvedTheme, articleLabel);
 
   try {
     if (await copyWithClipboardItem(html, resolvedMarkdown)) {

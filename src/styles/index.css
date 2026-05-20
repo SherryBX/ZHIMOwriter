@@ -691,6 +691,42 @@ button {
   flex-shrink: 0;
 }
 
+.article-label-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.03);
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.article-label-picker__label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-soft);
+  white-space: nowrap;
+}
+
+.article-label-picker__input {
+  border: none;
+  background: transparent;
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 600;
+  width: 72px;
+  padding: 0;
+  outline: none;
+  font-family: inherit;
+}
+
+.article-label-picker__input::placeholder {
+  color: var(--text-soft);
+  font-weight: 400;
+}
+
 /* ============================================================ */
 /* Theme: blackred — editorial section system                   */
 /* signature moves: H2 auto-numbering · H3 prefix · Fig.N · ◆HR */

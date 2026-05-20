@@ -46,7 +46,7 @@ describe("App", () => {
   it("renders the editor shell with the toolbar sidebar", () => {
     const { container } = render(<App />);
 
-    expect(screen.getByRole("textbox")).toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: "Markdown 编辑区" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /复制为图片/ })).toBeInTheDocument();
     expect(container.querySelector('input[type="file"]')).toBeInTheDocument();
     expect(screen.getByLabelText("快捷工具栏")).toBeInTheDocument();
@@ -57,7 +57,7 @@ describe("App", () => {
 
     render(<App />);
 
-    const editor = screen.getByRole("textbox");
+    const editor = screen.getByRole("textbox", { name: "Markdown 编辑区" });
 
     await user.clear(editor);
     await user.paste("# New Title\n\n![cover](E:/素材库/春季/封面.png)\n\n- First item\n- Second item\n\n> Quote");
@@ -81,7 +81,7 @@ describe("App", () => {
 
     render(<App />);
 
-    const editor = screen.getByRole("textbox");
+    const editor = screen.getByRole("textbox", { name: "Markdown 编辑区" });
     const fileInput = screen.getByLabelText(/导入 Markdown/);
     const markdownFile = new File(["# Import Success\n\nThis came from a file."], "demo.md", {
       type: "text/markdown",
@@ -130,7 +130,7 @@ describe("App", () => {
 
     render(<App />);
 
-    const editor = screen.getByRole("textbox");
+    const editor = screen.getByRole("textbox", { name: "Markdown 编辑区" });
 
     await user.clear(editor);
     await user.paste("# Gallery\n\n![cover](E:/素材/封面.png)\n\nBody copy");

@@ -3,7 +3,7 @@ import MarkdownIt from "markdown-it";
 import { isImageFailed, normalizeMarkdownImageSource, resolvePreviewImageSrc } from "./imagePath";
 import { getTheme, type ThemeId } from "../themes/themes";
 
-const topArticleLabel = "ZHIMO";
+const defaultArticleLabel = "ZHIMO";
 
 function escapeAttribute(value: string) {
   return value
@@ -163,35 +163,35 @@ export function normalizeMarkdownForRender(markdown: string) {
 }
 
 
-export function renderPreviewHtml(markdown: string, themeId: ThemeId = "classic") {
+export function renderPreviewHtml(markdown: string, themeId: ThemeId = "classic", articleLabel: string = defaultArticleLabel) {
   const normalized = normalizeMarkdownForRender(markdown);
   const content = previewMarkdown.render(normalized);
   const theme = getTheme(themeId);
 
   if (theme.headerFooterVisible) {
-    const header = `<section class="wechat-article__header"><span class="wechat-article__header-line-inner"></span><span class="wechat-article__header-text">${topArticleLabel}</span><span class="wechat-article__header-line-inner"></span></section>`;
+    const header = `<section class="wechat-article__header"><span class="wechat-article__header-line-inner"></span><span class="wechat-article__header-text">${articleLabel}</span><span class="wechat-article__header-line-inner"></span></section>`;
     const footer = `<section class="wechat-article__footer"><span class="wechat-article__header-line-inner"></span><span class="wechat-article__header-text">END</span><span class="wechat-article__header-line-inner"></span></section>`;
     return decoratePreviewMarkup(`${header}${content}${footer}`);
   }
 
   // Restore original top tag and divider for themes like Classic
-  const topTag = `<div class="wechat-article__top-tag">${topArticleLabel}</div>`;
+  const topTag = `<div class="wechat-article__top-tag">${articleLabel}</div>`;
   const topDivider = theme.topDividerVisible ? `<div class="wechat-article__top-divider"></div>` : "";
   return decoratePreviewMarkup(`${topTag}${topDivider}${content}`);
 }
 
-export function renderStandardMarkdownHtml(markdown: string, themeId: ThemeId = "classic") {
+export function renderStandardMarkdownHtml(markdown: string, themeId: ThemeId = "classic", articleLabel: string = defaultArticleLabel) {
   const normalized = normalizeMarkdownForRender(markdown);
   const content = standardMarkdown.render(normalized);
   const theme = getTheme(themeId);
 
   if (theme.headerFooterVisible) {
-    const header = `<section class="wechat-article__header"><span class="wechat-article__header-line-inner"></span><span class="wechat-article__header-text">${topArticleLabel}</span><span class="wechat-article__header-line-inner"></span></section>`;
+    const header = `<section class="wechat-article__header"><span class="wechat-article__header-line-inner"></span><span class="wechat-article__header-text">${articleLabel}</span><span class="wechat-article__header-line-inner"></span></section>`;
     const footer = `<section class="wechat-article__footer"><span class="wechat-article__header-line-inner"></span><span class="wechat-article__header-text">END</span><span class="wechat-article__header-line-inner"></span></section>`;
     return `${header}${content}${footer}`;
   }
 
-  const topTag = `<div class="wechat-article__top-tag">${topArticleLabel}</div>`;
+  const topTag = `<div class="wechat-article__top-tag">${articleLabel}</div>`;
   const topDivider = theme.topDividerVisible ? `<div class="wechat-article__top-divider"></div>` : "";
   return `${topTag}${topDivider}${content}`;
 }

@@ -5,10 +5,12 @@ type AppHeaderProps = {
   copyButtonLabel: string;
   copyImageButtonLabel: string;
   themeId: ThemeId;
+  articleLabel: string;
   onImportMarkdown: (markdown: string) => void;
   onCopyToWechat: () => void | Promise<void>;
   onCopyAsImage: () => void | Promise<void>;
   onThemeChange: (theme: ThemeId) => void;
+  onArticleLabelChange: (label: string) => void;
 };
 
 function readMarkdownFile(file: File) {
@@ -26,10 +28,12 @@ function AppHeader({
   copyButtonLabel,
   copyImageButtonLabel,
   themeId,
+  articleLabel,
   onImportMarkdown,
   onCopyToWechat,
   onCopyAsImage,
   onThemeChange,
+  onArticleLabelChange,
 }: AppHeaderProps) {
   const fileInputId = "markdown-import-input";
 
@@ -69,6 +73,17 @@ function AppHeader({
               {theme.label}
             </button>
           ))}
+        </div>
+        <div className="article-label-picker">
+          <span className="article-label-picker__label">头部标识</span>
+          <input
+            type="text"
+            className="article-label-picker__input"
+            value={articleLabel}
+            onChange={(e) => onArticleLabelChange(e.target.value)}
+            placeholder="ZHIMO"
+            maxLength={12}
+          />
         </div>
         <label className="ghost-button app-header__import" htmlFor={fileInputId}>
           {"导入 MD"}

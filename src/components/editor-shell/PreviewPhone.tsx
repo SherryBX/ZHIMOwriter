@@ -6,11 +6,12 @@ import { defaultThemeId, type ThemeId } from "../../themes/themes";
 type PreviewPhoneProps = {
   markdown: string;
   theme?: ThemeId;
+  articleLabel?: string;
 };
 
-function PreviewPhone({ markdown, theme = defaultThemeId }: PreviewPhoneProps) {
+function PreviewPhone({ markdown, theme = defaultThemeId, articleLabel }: PreviewPhoneProps) {
   const articleRef = useRef<HTMLElement>(null);
-  const previewHtml = useMemo(() => renderPreviewHtml(markdown, theme), [markdown, theme]);
+  const previewHtml = useMemo(() => renderPreviewHtml(markdown, theme, articleLabel), [markdown, theme, articleLabel]);
 
   useEffect(() => {
     const article = articleRef.current;

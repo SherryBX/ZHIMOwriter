@@ -10,7 +10,7 @@ export const initialMarkdown = `# 春日新品发布手册
 
 > 先将写作与预览框架搭建就绪，再逐步精修样式细节。
 
-![本地封面图](E:\\素材库\\春季\\封面.png)
+![本地封面图](E:\\WebstormProject\\项目\\智茉公众号模板\\src\\images.jpg)
 
 \`\`\`ts
 const message = "代码块现在也会渲染";

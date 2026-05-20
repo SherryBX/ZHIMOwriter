@@ -1060,6 +1060,6 @@ button {
   }
 
   .editor-layout {
-    // Manual height management removed to allow independent scrolling
+    /* Manual height management removed to allow independent scrolling */
   }
 }

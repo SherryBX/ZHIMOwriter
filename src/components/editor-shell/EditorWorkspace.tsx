@@ -13,7 +13,6 @@ function EditorWorkspace({ markdown, onChange, scrollRef, onScroll }: EditorWork
       <div className="panel-heading">
         <p className="panel-kicker">WORKSPACE</p>
         <h2>Markdown 编辑区</h2>
-        <p className="panel-description">左侧实时写 Markdown，右侧实时预览。</p>
       </div>
       <label className="editor-surface" htmlFor="markdown-editor">
         <div className="editor-surface__topbar">

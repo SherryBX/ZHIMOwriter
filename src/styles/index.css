@@ -192,14 +192,12 @@ button {
 .preview-surface {
   display: flex;
   flex-direction: column;
-  margin: 24px 32px 32px;
-  border: 1px solid var(--border-strong);
-  border-radius: 16px;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
   background: var(--surface-strong);
-  box-shadow: var(--shadow-premium);
   overflow: hidden;
   flex: 1;
-  height: calc(100% - 130px); /* 保持固定比例的高，与 header 统一 */
 }
 
 .editor-surface__topbar,

@@ -98,28 +98,76 @@ function App() {
     }
   }, [articleLabel]);
 
-  async function handleCopyToWechat() {
+  const runWithPreservedScroll = async (action: () => Promise<void> | void) => {
+    const editorScroll = editorScrollRef.current ? editorScrollRef.current.scrollTop : 0;
+    const previewScroll = previewScrollRef.current ? previewScrollRef.current.scrollTop : 0;
+
     try {
-      await copyWechatContent(markdown, theme, undefined, articleLabel);
-      setCopyButtonLabel("已复制");
-      window.setTimeout(() => setCopyButtonLabel(defaultCopyButtonLabel), 1800);
-    } catch {
-      setCopyButtonLabel("复制失败");
-      window.setTimeout(() => setCopyButtonLabel(defaultCopyButtonLabel), 1800);
+      await action();
+    } finally {
+      requestAnimationFrame(() => {
+        if (editorScrollRef.current) {
+          editorScrollRef.current.scrollTop = editorScroll;
+        }
+        if (previewScrollRef.current) {
+          previewScrollRef.current.scrollTop = previewScroll;
+        }
+      });
+      setTimeout(() => {
+        if (editorScrollRef.current) {
+          editorScrollRef.current.scrollTop = editorScroll;
+        }
+        if (previewScrollRef.current) {
+          previewScrollRef.current.scrollTop = previewScroll;
+        }
+      }, 50);
     }
+  };
+
+  async function handleCopyToWechat() {
+    await runWithPreservedScroll(async () => {
+      try {
+        await copyWechatContent(markdown, theme, undefined, articleLabel);
+        setCopyButtonLabel("已复制");
+        window.setTimeout(() => {
+          runWithPreservedScroll(() => {
+            setCopyButtonLabel(defaultCopyButtonLabel);
+          });
+        }, 1800);
+      } catch {
+        setCopyButtonLabel("复制失败");
+        window.setTimeout(() => {
+          runWithPreservedScroll(() => {
+            setCopyButtonLabel(defaultCopyButtonLabel);
+          });
+        }, 1800);
+      }
+    });
   }
 
   async function handleCopyAsImage() {
-    try {
-      setCopyImageButtonLabel("正在生成...");
-      await copyPreviewAsImage();
-      setCopyImageButtonLabel("已复制图片");
-      window.setTimeout(() => setCopyImageButtonLabel("复制为图片"), 1800);
-    } catch (err) {
-      console.error(err);
-      setCopyImageButtonLabel("复制失败");
-      window.setTimeout(() => setCopyImageButtonLabel("复制为图片"), 1800);
-    }
+    await runWithPreservedScroll(async () => {
+      try {
+        setCopyImageButtonLabel("正在生成...");
+        // Wait one frame to let "正在生成..." render before capturing
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+        await copyPreviewAsImage();
+        setCopyImageButtonLabel("已复制图片");
+        window.setTimeout(() => {
+          runWithPreservedScroll(() => {
+            setCopyImageButtonLabel("复制为图片");
+          });
+        }, 1800);
+      } catch (err) {
+        console.error(err);
+        setCopyImageButtonLabel("复制失败");
+        window.setTimeout(() => {
+          runWithPreservedScroll(() => {
+            setCopyImageButtonLabel("复制为图片");
+          });
+        }, 1800);
+      }
+    });
   }
 
   return (

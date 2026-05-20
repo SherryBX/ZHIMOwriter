@@ -169,8 +169,8 @@ export function renderPreviewHtml(markdown: string, themeId: ThemeId = "classic"
   const theme = getTheme(themeId);
 
   if (theme.headerFooterVisible) {
-    const header = `<table class="wechat-article__header"><tr><td class="wechat-article__header-line">&#8203;</td><td class="wechat-article__header-text">${topArticleLabel}</td><td class="wechat-article__header-line">&#8203;</td></tr></table>`;
-    const footer = `<table class="wechat-article__footer"><tr><td class="wechat-article__header-line">&#8203;</td><td class="wechat-article__header-text">END</td><td class="wechat-article__header-line">&#8203;</td></tr></table>`;
+    const header = `<table class="wechat-article__header" border="0" cellpadding="0" cellspacing="0"><tr><td class="wechat-article__header-line">&#8203;</td><td class="wechat-article__header-text">${topArticleLabel}</td><td class="wechat-article__header-line">&#8203;</td></tr></table>`;
+    const footer = `<table class="wechat-article__footer" border="0" cellpadding="0" cellspacing="0"><tr><td class="wechat-article__header-line">&#8203;</td><td class="wechat-article__header-text">END</td><td class="wechat-article__header-line">&#8203;</td></tr></table>`;
     return decoratePreviewMarkup(`${header}${content}${footer}`);
   }
 
@@ -186,8 +186,8 @@ export function renderStandardMarkdownHtml(markdown: string, themeId: ThemeId = 
   const theme = getTheme(themeId);
 
   if (theme.headerFooterVisible) {
-    const header = `<table class="wechat-article__header"><tr><td class="wechat-article__header-line">&#8203;</td><td class="wechat-article__header-text">${topArticleLabel}</td><td class="wechat-article__header-line">&#8203;</td></tr></table>`;
-    const footer = `<table class="wechat-article__footer"><tr><td class="wechat-article__header-line">&#8203;</td><td class="wechat-article__header-text">END</td><td class="wechat-article__header-line">&#8203;</td></tr></table>`;
+    const header = `<table class="wechat-article__header" border="0" cellpadding="0" cellspacing="0"><tr><td class="wechat-article__header-line">&#8203;</td><td class="wechat-article__header-text">${topArticleLabel}</td><td class="wechat-article__header-line">&#8203;</td></tr></table>`;
+    const footer = `<table class="wechat-article__footer" border="0" cellpadding="0" cellspacing="0"><tr><td class="wechat-article__header-line">&#8203;</td><td class="wechat-article__header-text">END</td><td class="wechat-article__header-line">&#8203;</td></tr></table>`;
     return `${header}${content}${footer}`;
   }
 

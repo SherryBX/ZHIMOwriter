@@ -98,8 +98,35 @@ async function resolveWechatImageSrc(src: string) {
 }
 
 function applyInlineStyle(element: Element, style: string) {
-  const previous = element.getAttribute("style");
-  element.setAttribute("style", previous ? `${previous};${style}` : style);
+  const previous = element.getAttribute("style") ?? "";
+
+  const parseStyle = (str: string) => {
+    const rules: Record<string, string> = {};
+    const parts = str.split(";");
+    for (const part of parts) {
+      const colonIndex = part.indexOf(":");
+      if (colonIndex > 0) {
+        const key = part.slice(0, colonIndex).trim().toLowerCase();
+        const value = part.slice(colonIndex + 1).trim();
+        if (key && value) {
+          rules[key] = value;
+        }
+      }
+    }
+    return rules;
+  };
+
+  const prevRules = parseStyle(previous);
+  const nextRules = parseStyle(style);
+  const mergedRules = { ...prevRules, ...nextRules };
+
+  const mergedString = Object.entries(mergedRules)
+    .map(([key, value]) => `${key}:${value}`)
+    .join(";");
+
+  if (mergedString) {
+    element.setAttribute("style", mergedString + ";");
+  }
 }
 
 function replaceElementWithStyledSpan(element: Element, doc: Document, style: string) {
@@ -120,11 +147,11 @@ function applySyntaxHighlightInlineStyles(root: ParentNode, theme: ThemeSpec) {
 
 async function decorateWechatHtml(html: string, theme: ThemeSpec) {
   if (typeof DOMParser === "undefined") {
-    return `<section style="${theme.container}">${html}</section>`;
+    return `<section style="${theme.container};box-shadow:none;border:none;border-radius:0;">${html}</section>`;
   }
 
   const doc = new DOMParser().parseFromString(
-    `<section style="${theme.container}">${html}</section>`,
+    `<section style="${theme.container};box-shadow:none;border:none;border-radius:0;">${html}</section>`,
     "text/html",
   );
 
@@ -216,25 +243,31 @@ async function decorateWechatHtml(html: string, theme: ThemeSpec) {
   }
 
   for (const blockquote of Array.from(root.querySelectorAll("blockquote"))) {
-    applyInlineStyle(blockquote, theme.blockquote);
+    const section = doc.createElement("section");
+    while (blockquote.firstChild) {
+      section.appendChild(blockquote.firstChild);
+    }
+    applyInlineStyle(section, theme.blockquote);
 
     if (theme.blockquoteMarkBefore) {
       const mark = doc.createElement("span");
       mark.setAttribute("style", theme.blockquoteMarkBefore);
       mark.textContent = "“";
-      blockquote.insertBefore(mark, blockquote.firstChild);
+      section.insertBefore(mark, section.firstChild);
     }
 
     if (theme.blockquoteMarkAfter) {
       const mark = doc.createElement("span");
       mark.setAttribute("style", theme.blockquoteMarkAfter);
       mark.textContent = "”";
-      blockquote.appendChild(mark);
+      section.appendChild(mark);
     }
 
-    for (const p of blockquote.querySelectorAll("p")) {
+    for (const p of section.querySelectorAll("p")) {
       applyInlineStyle(p, theme.blockquoteParagraph);
     }
+
+    blockquote.replaceWith(section);
   }
 
   for (const list of root.querySelectorAll("ul")) {
@@ -329,51 +362,83 @@ async function decorateWechatHtml(html: string, theme: ThemeSpec) {
     }
   }
 
+  // Extract border width and color from theme.headerLine for line styling
+  const borderWidthMatch = theme.headerLine.match(/border-top:\s*(\d+px)/);
+  const borderColorMatch = theme.headerLine.match(/border-top:[^#\s]+(#[a-fA-F0-9]{3,8})/);
+  
+  const lineHeight = borderWidthMatch ? borderWidthMatch[1] : "2px";
+  const lineColor = borderColorMatch ? borderColorMatch[1] : "#ecccc2";
+
+  // Use section + display:inline-block + background-color to draw lines.
+  // This is the proven approach used by professional WeChat editors (秀米, 135编辑器).
+  // WeChat's sanitizer preserves: <section>, display:inline-block, background-color, width, height.
+  // It strips: <hr>, empty <div>, background-image:linear-gradient, <table> cell tricks.
+
   for (const header of Array.from(root.querySelectorAll(".wechat-article__header"))) {
-    applyInlineStyle(header, theme.headerContainer);
-    for (const tr of header.querySelectorAll("tr")) {
-      applyInlineStyle(tr, "border:none;padding:0;");
-    }
-    for (const td of header.querySelectorAll("td")) {
-      applyInlineStyle(td, "border:none;padding:0;vertical-align:middle;");
-    }
-    for (const line of header.querySelectorAll(".wechat-article__header-line")) {
-      applyInlineStyle(line, "width:41%;padding:0;");
-    }
-    for (const innerLine of header.querySelectorAll(".wechat-article__header-line-inner")) {
-      applyInlineStyle(innerLine, theme.headerLine);
-    }
-    for (const text of header.querySelectorAll(".wechat-article__header-text")) {
-      applyInlineStyle(text, theme.headerText);
-    }
+    const textNode = header.querySelector(".wechat-article__header-text");
+    const textContent = textNode ? textNode.textContent : "";
+
+    const wrapper = doc.createElement("section");
+    wrapper.setAttribute("style", `display:flex;align-items:center;width:100%;margin:0 0 32px;`);
+
+    const lineLeft = doc.createElement("section");
+    lineLeft.setAttribute("style", `flex:1;height:${lineHeight};background-color:${lineColor};overflow:hidden;font-size:0;`);
+    lineLeft.innerHTML = "&nbsp;";
+
+    const textSpan = doc.createElement("section");
+    textSpan.setAttribute("style", `flex-shrink:0;padding:0 10px;white-space:nowrap;line-height:1;${theme.headerText}`);
+    textSpan.textContent = textContent;
+
+    const lineRight = doc.createElement("section");
+    lineRight.setAttribute("style", `flex:1;height:${lineHeight};background-color:${lineColor};overflow:hidden;font-size:0;`);
+    lineRight.innerHTML = "&nbsp;";
+
+    wrapper.appendChild(lineLeft);
+    wrapper.appendChild(textSpan);
+    wrapper.appendChild(lineRight);
+
+    header.replaceWith(wrapper);
   }
 
   for (const footer of Array.from(root.querySelectorAll(".wechat-article__footer"))) {
-    applyInlineStyle(footer, theme.footerContainer);
-    for (const tr of footer.querySelectorAll("tr")) {
-      applyInlineStyle(tr, "border:none;padding:0;");
-    }
-    for (const td of footer.querySelectorAll("td")) {
-      applyInlineStyle(td, "border:none;padding:0;vertical-align:middle;");
-    }
-    for (const line of footer.querySelectorAll(".wechat-article__header-line")) {
-      applyInlineStyle(line, "width:41%;padding:0;");
-    }
-    for (const innerLine of footer.querySelectorAll(".wechat-article__header-line-inner")) {
-      applyInlineStyle(innerLine, theme.headerLine);
-    }
-    for (const text of footer.querySelectorAll(".wechat-article__header-text")) {
-      applyInlineStyle(text, theme.headerText);
-    }
+    const textNode = footer.querySelector(".wechat-article__header-text");
+    const textContent = textNode ? textNode.textContent : "END";
+
+    const wrapper = doc.createElement("section");
+    wrapper.setAttribute("style", `display:flex;align-items:center;width:100%;margin:32px 0 0;`);
+
+    const lineLeft = doc.createElement("section");
+    lineLeft.setAttribute("style", `flex:1;height:${lineHeight};background-color:${lineColor};overflow:hidden;font-size:0;`);
+    lineLeft.innerHTML = "&nbsp;";
+
+    const textSpan = doc.createElement("section");
+    textSpan.setAttribute("style", `flex-shrink:0;padding:0 10px;white-space:nowrap;line-height:1;${theme.headerText}`);
+    textSpan.textContent = textContent;
+
+    const lineRight = doc.createElement("section");
+    lineRight.setAttribute("style", `flex:1;height:${lineHeight};background-color:${lineColor};overflow:hidden;font-size:0;`);
+    lineRight.innerHTML = "&nbsp;";
+
+    wrapper.appendChild(lineLeft);
+    wrapper.appendChild(textSpan);
+    wrapper.appendChild(lineRight);
+
+    footer.replaceWith(wrapper);
   }
 
   if (theme.topDividerVisible) {
-    for (const divider of root.querySelectorAll(".wechat-article__top-divider")) {
-      applyInlineStyle(divider, theme.topDivider);
-    }
+    // Extract color from topDividerLine style (e.g. "border-top:1px solid rgba(194,54,22,0.18)")
+    const dividerColorMatch = theme.topDividerLine.match(/border-top:\s*\d+px\s+solid\s+([^;]+)/);
+    const dividerHeightMatch = theme.topDividerLine.match(/border-top:\s*(\d+px)/);
+    const dividerColor = dividerColorMatch ? dividerColorMatch[1].trim() : "rgba(194,54,22,0.18)";
+    const dividerHeight = dividerHeightMatch ? dividerHeightMatch[1] : "1px";
 
-    for (const dividerLine of root.querySelectorAll(".wechat-article__top-divider-line")) {
-      applyInlineStyle(dividerLine, theme.topDividerLine);
+    for (const divider of Array.from(root.querySelectorAll(".wechat-article__top-divider"))) {
+      // Replace the empty div with a section that has visible background-color + &nbsp;
+      const line = doc.createElement("section");
+      line.setAttribute("style", `margin:${theme.topDivider.match(/margin:\s*([^;]+)/)?.[1] || "0 0 16px"};height:${dividerHeight};background-color:${dividerColor};overflow:hidden;font-size:0;`);
+      line.innerHTML = "&nbsp;";
+      divider.replaceWith(line);
     }
   } else {
     for (const divider of root.querySelectorAll(".wechat-article__top-divider")) {

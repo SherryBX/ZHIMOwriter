@@ -30,7 +30,7 @@ function highlightCodeBlock(code: string, language: string) {
 
 function createMarkdownParser(imageRenderer: (src: string, alt: string, caption: string) => string) {
   const parser = new MarkdownIt({
-    html: false,
+    html: true,
     linkify: true,
     breaks: true,
     typographer: false,
@@ -169,8 +169,8 @@ export function renderPreviewHtml(markdown: string, themeId: ThemeId = "classic"
   const theme = getTheme(themeId);
 
   if (theme.headerFooterVisible) {
-    const header = `<table class="wechat-article__header" border="0" cellpadding="0" cellspacing="0"><tr><td class="wechat-article__header-line"><hr class="wechat-article__header-line-inner" /></td><td class="wechat-article__header-text">${topArticleLabel}</td><td class="wechat-article__header-line"><hr class="wechat-article__header-line-inner" /></td></tr></table>`;
-    const footer = `<table class="wechat-article__footer" border="0" cellpadding="0" cellspacing="0"><tr><td class="wechat-article__header-line"><hr class="wechat-article__header-line-inner" /></td><td class="wechat-article__header-text">END</td><td class="wechat-article__header-line"><hr class="wechat-article__header-line-inner" /></td></tr></table>`;
+    const header = `<section class="wechat-article__header"><span class="wechat-article__header-line-inner"></span><span class="wechat-article__header-text">${topArticleLabel}</span><span class="wechat-article__header-line-inner"></span></section>`;
+    const footer = `<section class="wechat-article__footer"><span class="wechat-article__header-line-inner"></span><span class="wechat-article__header-text">END</span><span class="wechat-article__header-line-inner"></span></section>`;
     return decoratePreviewMarkup(`${header}${content}${footer}`);
   }
 
@@ -186,8 +186,8 @@ export function renderStandardMarkdownHtml(markdown: string, themeId: ThemeId = 
   const theme = getTheme(themeId);
 
   if (theme.headerFooterVisible) {
-    const header = `<table class="wechat-article__header" border="0" cellpadding="0" cellspacing="0"><tr><td class="wechat-article__header-line"><hr class="wechat-article__header-line-inner" /></td><td class="wechat-article__header-text">${topArticleLabel}</td><td class="wechat-article__header-line"><hr class="wechat-article__header-line-inner" /></td></tr></table>`;
-    const footer = `<table class="wechat-article__footer" border="0" cellpadding="0" cellspacing="0"><tr><td class="wechat-article__header-line"><hr class="wechat-article__header-line-inner" /></td><td class="wechat-article__header-text">END</td><td class="wechat-article__header-line"><hr class="wechat-article__header-line-inner" /></td></tr></table>`;
+    const header = `<section class="wechat-article__header"><span class="wechat-article__header-line-inner"></span><span class="wechat-article__header-text">${topArticleLabel}</span><span class="wechat-article__header-line-inner"></span></section>`;
+    const footer = `<section class="wechat-article__footer"><span class="wechat-article__header-line-inner"></span><span class="wechat-article__header-text">END</span><span class="wechat-article__header-line-inner"></span></section>`;
     return `${header}${content}${footer}`;
   }
 

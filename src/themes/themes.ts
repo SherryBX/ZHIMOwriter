@@ -68,16 +68,15 @@ export const classicTheme: ThemeSpec = {
   swatch: "#C23616",
   container:
     "max-width:677px;margin:0 auto;padding:48px 22px 64px;box-sizing:border-box;color:#1a1a18;background:#ffffff;font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;font-size:16px;line-height:1.75;",
-  h1: "margin:0 0 24px;color:#1a1a18;font-size:34px;font-weight:700;line-height:1.25;letter-spacing:0.02em;font-family:'Noto Serif SC','Songti SC',STSong,Georgia,serif;",
+  h1: "margin:0 0 24px;color:#1a1a18;font-size:26px;font-weight:700;line-height:1.25;letter-spacing:0.02em;font-family:'Noto Serif SC','Songti SC',STSong,Georgia,serif;",
   h1MarkBefore: "",
   h1MarkAfter: "",
-  h2: "margin:18px 0 18px;color:#1a1a18;font-size:24px;font-weight:700;line-height:1.42;font-family:'Noto Serif SC','Songti SC',STSong,Georgia,serif;",
+  h2: "margin:18px 0 18px;color:#1a1a18;font-size:20px;font-weight:700;line-height:1.42;font-family:'Noto Serif SC','Songti SC',STSong,Georgia,serif;",
   h3: "margin:26px 0 16px;color:#1a1a18;font-size:19px;font-weight:600;line-height:1.44;font-family:'Noto Serif SC','Songti SC',STSong,Georgia,serif;",
   paragraph: "margin:0 0 16px;color:#4a4a45;font-size:16px;line-height:1.9;word-break:break-word;",
   mediaParagraph: "margin:0 0 10px;",
-  blockquote:
-    "margin:0 0 18px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 20px;border-left:3px solid #c23616;border-radius:0 8px 8px 0;background:#ffffff;color:#4a4a45;font-size:15px;line-height:1.9;",
-  blockquoteParagraph: "margin:0;width:100%;",
+  blockquote: "margin:0 0 18px;padding:16px 20px;border-left:3px solid #C23616;background:#ffffff;border-radius:0 8px 8px 0;color:#5e5a54;font-size:14px;line-height:1.75;",
+  blockquoteParagraph: "margin:0;width:100%;font-size:14px;color:#5e5a54;line-height:1.75;",
   unorderedList: "margin:0 0 18px;padding-left:24px;color:#4a4a45;font-size:15px;line-height:1.9;",
   orderedList: "margin:0 0 18px;padding-left:24px;color:#4a4a45;font-size:15px;line-height:1.9;",
   listItem: "margin:0 0 6px;",
@@ -102,7 +101,7 @@ export const classicTheme: ThemeSpec = {
     "display:block;margin:0 0 18px;color:#C23616;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:12px;letter-spacing:0.28em;text-transform:uppercase;",
   headerContainer: "width:100%;margin:0 0 32px;border-collapse:collapse;border:none;line-height:1;",
   headerLine:
-    "margin:0;border:none;border-top:2px solid rgba(194,54,22,0.22);width:100%;",
+    "margin:0;border-top:2px solid #ecccc2;height:0;font-size:1px;line-height:1px;width:100%;display:block;overflow:hidden;",
   headerText:
     "text-align:center;padding:0 6px;white-space:nowrap;color:#C23616;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:11px;letter-spacing:0.32em;text-transform:uppercase;vertical-align:middle;",
   footerContainer: "width:100%;margin:32px 0 0;border-collapse:collapse;border:none;line-height:1;",
@@ -134,18 +133,15 @@ const blackredTheme: ThemeSpec = {
   swatch: "#991b1b",
   container:
     "max-width:677px;margin:0 auto;padding:32px 24px 56px;box-sizing:border-box;color:#2b2b28;background:#FAFAF7;font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;font-size:16px;line-height:1.95;",
-  h1: "margin:0 0 24px;text-align:center;color:#0a0a0a;font-size:34px;font-weight:700;line-height:1.3;letter-spacing:-0.01em;font-family:'Noto Serif SC','Songti SC',STSong,Georgia,serif;",
-  h2: "margin:24px 0 16px;color:#0a0a0a;font-size:24px;font-weight:700;line-height:1.42;letter-spacing:0.005em;font-family:'Noto Serif SC','Songti SC',STSong,Georgia,serif;",
+  h1: "margin:0 0 24px;text-align:center;color:#0a0a0a;font-size:26px;font-weight:700;line-height:1.3;letter-spacing:-0.01em;font-family:'Noto Serif SC','Songti SC',STSong,Georgia,serif;",
+  h2: "margin:24px 0 16px;color:#0a0a0a;font-size:20px;font-weight:700;line-height:1.42;letter-spacing:0.005em;font-family:'Noto Serif SC','Songti SC',STSong,Georgia,serif;",
   h3: "margin:20px 0 12px;color:#0a0a0a;font-size:18px;font-weight:600;line-height:1.44;letter-spacing:0.005em;font-family:'Noto Serif SC','Songti SC',STSong,Georgia,serif;",
   paragraph: "margin:0 0 16px;color:#2b2b28;font-size:16px;line-height:1.95;word-break:break-word;",
   mediaParagraph: "margin:0 0 16px;",
-  blockquote:
-    "margin:32px 0;padding:24px 44px;border-left:4px solid #991b1b;background:#fff9f9;color:#4a4a45;font-family:'Noto Serif SC','Songti SC',STSong,Georgia,serif;font-style:italic;font-size:16px;line-height:1.9;position:relative;border-radius:0 4px 4px 0;",
-  blockquoteMarkBefore:
-    "position:absolute;top:4px;left:12px;font-size:44px;color:#991b1b;opacity:0.15;font-family:Georgia,serif;",
-  blockquoteMarkAfter:
-    "position:absolute;bottom:-16px;right:16px;font-size:44px;color:#991b1b;opacity:0.15;font-family:Georgia,serif;",
-  blockquoteParagraph: "margin:0;width:100%;",
+  blockquote: "margin:20px 0;padding:16px 20px;border-left:4px solid #991b1b;background:#fff9f9;border-radius:0 4px 4px 0;color:#4a4a45;font-family:'Noto Serif SC','Songti SC',STSong,Georgia,serif;font-style:italic;font-size:14.5px;line-height:1.8;position:relative;",
+  blockquoteMarkBefore: "",
+  blockquoteMarkAfter: "",
+  blockquoteParagraph: "margin:0;width:100%;font-size:14.5px;color:#4a4a45;line-height:1.8;",
   unorderedList: "margin:0 0 24px;padding-left:24px;color:#2b2b28;font-size:15.5px;line-height:1.95;",
   orderedList: "margin:0 0 24px;padding-left:24px;color:#2b2b28;font-size:15.5px;line-height:1.95;",
   listItem: "margin:0 0 8px;",
@@ -171,7 +167,7 @@ const blackredTheme: ThemeSpec = {
     "display:inline-block;margin:0 0 32px;color:#0a0a0a;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:11px;letter-spacing:0.32em;text-transform:uppercase;",
   headerContainer: "width:100%;margin:0 0 32px;border-collapse:collapse;border:none;line-height:1;",
   headerLine:
-    "margin:0;border:none;border-top:2px solid rgba(153,27,27,0.22);width:100%;",
+    "margin:0;border-top:2px solid #e5c9c7;height:0;font-size:1px;line-height:1px;width:100%;display:block;overflow:hidden;",
   headerText:
     "text-align:center;padding:0 6px;white-space:nowrap;color:#991b1b;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:11px;letter-spacing:0.32em;text-transform:uppercase;vertical-align:middle;",
   footerContainer: "width:100%;margin:32px 0 0;border-collapse:collapse;border:none;line-height:1;",

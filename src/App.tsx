@@ -4,7 +4,9 @@ import EditorWorkspace from "./components/editor-shell/EditorWorkspace";
 import PreviewPanel from "./components/editor-shell/PreviewPanel";
 import { initialMarkdown } from "./data/mockMarkdown";
 import { copyWechatContent } from "./utils/wechatClipboard";
+import { copyPreviewAsImage } from "./utils/screenshot";
 import { defaultThemeId, getTheme, type ThemeId } from "./themes/themes";
+import ToolbarSidebar from "./components/editor-shell/ToolbarSidebar";
 
 const defaultCopyButtonLabel = "复制到公众号";
 const themeStorageKey = "zhimo:theme";
@@ -24,6 +26,7 @@ function readPersistedTheme(): ThemeId {
 function App() {
   const [markdown, setMarkdown] = useState(initialMarkdown);
   const [copyButtonLabel, setCopyButtonLabel] = useState(defaultCopyButtonLabel);
+  const [copyImageButtonLabel, setCopyImageButtonLabel] = useState("复制为图片");
   const [theme, setTheme] = useState<ThemeId>(() => readPersistedTheme());
   const deferredMarkdown = useDeferredValue(markdown);
 
@@ -84,18 +87,38 @@ function App() {
     }
   }
 
+  async function handleCopyAsImage() {
+    try {
+      setCopyImageButtonLabel("正在生成...");
+      await copyPreviewAsImage();
+      setCopyImageButtonLabel("已复制图片");
+      window.setTimeout(() => setCopyImageButtonLabel("复制为图片"), 1800);
+    } catch (err) {
+      console.error(err);
+      setCopyImageButtonLabel("复制失败");
+      window.setTimeout(() => setCopyImageButtonLabel("复制为图片"), 1800);
+    }
+  }
+
   return (
     <div className="app-shell">
       <div className="app-shell__backdrop" />
       <div className="app-shell__frame">
         <AppHeader
           copyButtonLabel={copyButtonLabel}
+          copyImageButtonLabel={copyImageButtonLabel}
           themeId={theme}
           onImportMarkdown={setMarkdown}
           onCopyToWechat={handleCopyToWechat}
+          onCopyAsImage={handleCopyAsImage}
           onThemeChange={setTheme}
         />
         <div className="editor-layout">
+          <ToolbarSidebar
+            editorRef={editorScrollRef}
+            markdown={markdown}
+            onChange={setMarkdown}
+          />
           <EditorWorkspace 
             markdown={markdown} 
             onChange={setMarkdown} 

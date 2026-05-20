@@ -3,9 +3,11 @@ import { themeList, type ThemeId } from "../../themes/themes";
 
 type AppHeaderProps = {
   copyButtonLabel: string;
+  copyImageButtonLabel: string;
   themeId: ThemeId;
   onImportMarkdown: (markdown: string) => void;
   onCopyToWechat: () => void | Promise<void>;
+  onCopyAsImage: () => void | Promise<void>;
   onThemeChange: (theme: ThemeId) => void;
 };
 
@@ -20,7 +22,15 @@ function readMarkdownFile(file: File) {
   });
 }
 
-function AppHeader({ copyButtonLabel, themeId, onImportMarkdown, onCopyToWechat, onThemeChange }: AppHeaderProps) {
+function AppHeader({
+  copyButtonLabel,
+  copyImageButtonLabel,
+  themeId,
+  onImportMarkdown,
+  onCopyToWechat,
+  onCopyAsImage,
+  onThemeChange,
+}: AppHeaderProps) {
   const fileInputId = "markdown-import-input";
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
@@ -71,8 +81,16 @@ function AppHeader({ copyButtonLabel, themeId, onImportMarkdown, onCopyToWechat,
           aria-label="导入 Markdown 文件"
           onChange={handleFileChange}
         />
-        <button type="button" className="primary-button" onClick={onCopyToWechat}>
+        <button
+          type="button"
+          className="ghost-button"
+          onClick={onCopyToWechat}
+          style={{ marginRight: "12px", border: "1px solid var(--border-color, #e5e5e0)" }}
+        >
           {copyButtonLabel}
+        </button>
+        <button type="button" className="primary-button" onClick={onCopyAsImage}>
+          {copyImageButtonLabel}
         </button>
       </div>
     </header>

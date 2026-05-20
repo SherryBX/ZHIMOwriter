@@ -43,13 +43,13 @@ afterEach(() => {
 });
 
 describe("App", () => {
-  it("renders the editor shell without the helper sidebar", () => {
+  it("renders the editor shell with the toolbar sidebar", () => {
     const { container } = render(<App />);
 
     expect(screen.getByRole("textbox")).toBeInTheDocument();
-    expect(screen.getByRole("button")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /复制为图片/ })).toBeInTheDocument();
     expect(container.querySelector('input[type="file"]')).toBeInTheDocument();
-    expect(screen.queryByRole("complementary")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("快捷工具栏")).toBeInTheDocument();
   });
 
   it("syncs markdown input and absolute-path images into the preview", async () => {
@@ -134,7 +134,7 @@ describe("App", () => {
 
     await user.clear(editor);
     await user.paste("# Gallery\n\n![cover](E:/素材/封面.png)\n\nBody copy");
-    await user.click(screen.getByRole("button"));
+    await user.click(screen.getByRole("button", { name: /复制到公众号|已复制/ }));
 
     await waitFor(() => {
       expect(write).toHaveBeenCalledTimes(1);

@@ -335,7 +335,7 @@ async function decorateWechatHtml(html: string, theme: ThemeSpec) {
       applyInlineStyle(td, "border:none;padding:0;vertical-align:middle;");
     }
     for (const line of header.querySelectorAll(".wechat-article__header-line")) {
-      applyInlineStyle(line, "width:24%;padding:0;");
+      applyInlineStyle(line, "width:38%;padding:0;");
     }
     for (const innerLine of header.querySelectorAll(".wechat-article__header-line-inner")) {
       applyInlineStyle(innerLine, theme.headerLine);
@@ -354,7 +354,7 @@ async function decorateWechatHtml(html: string, theme: ThemeSpec) {
       applyInlineStyle(td, "border:none;padding:0;vertical-align:middle;");
     }
     for (const line of footer.querySelectorAll(".wechat-article__header-line")) {
-      applyInlineStyle(line, "width:24%;padding:0;");
+      applyInlineStyle(line, "width:38%;padding:0;");
     }
     for (const innerLine of footer.querySelectorAll(".wechat-article__header-line-inner")) {
       applyInlineStyle(innerLine, theme.headerLine);

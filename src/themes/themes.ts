@@ -102,7 +102,7 @@ export const classicTheme: ThemeSpec = {
     "display:block;margin:0 0 18px;color:#C23616;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:12px;letter-spacing:0.28em;text-transform:uppercase;",
   headerContainer: "width:100%;margin:0 0 32px;border-collapse:collapse;border:none;line-height:1;",
   headerLine:
-    "width:24%;padding:0;height:0;border-top:2px solid rgba(194,54,22,0.22);line-height:0;font-size:0;overflow:hidden;",
+    "margin:0;border:none;border-top:2px solid rgba(194,54,22,0.22);width:100%;",
   headerText:
     "text-align:center;padding:0 12px;white-space:nowrap;color:#C23616;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:11px;letter-spacing:0.32em;text-transform:uppercase;vertical-align:middle;",
   footerContainer: "width:100%;margin:32px 0 0;border-collapse:collapse;border:none;line-height:1;",
@@ -171,7 +171,7 @@ const blackredTheme: ThemeSpec = {
     "display:inline-block;margin:0 0 32px;color:#0a0a0a;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:11px;letter-spacing:0.32em;text-transform:uppercase;",
   headerContainer: "width:100%;margin:0 0 32px;border-collapse:collapse;border:none;line-height:1;",
   headerLine:
-    "width:24%;padding:0;height:0;border-top:2px solid rgba(153,27,27,0.22);line-height:0;font-size:0;overflow:hidden;",
+    "margin:0;border:none;border-top:2px solid rgba(153,27,27,0.22);width:100%;",
   headerText:
     "text-align:center;padding:0 12px;white-space:nowrap;color:#991b1b;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:11px;letter-spacing:0.32em;text-transform:uppercase;vertical-align:middle;",
   footerContainer: "width:100%;margin:32px 0 0;border-collapse:collapse;border:none;line-height:1;",

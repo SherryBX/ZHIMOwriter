@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>黑红主题 · 公众号模板 Preview</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #F5F5F4;
+    color: #0A0A0A;
+    font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== Page chrome (不参与主题) ===== */
+  .page {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 56px 32px 96px;
+  }
+  .page__kicker {
+    color: #737373;
+    font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    margin: 0 0 12px;
+  }
+  .page__title {
+    margin: 0 0 8px;
+    font-family: "Noto Serif SC", "Songti SC", STSong, Georgia, serif;
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .page__sub {
+    margin: 0 0 40px;
+    color: #737373;
+    font-size: 14px;
+    line-height: 1.7;
+    max-width: 720px;
+  }
+
+  /* ===== Variant switcher chip ===== */
+  .chips {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    border: 1px solid #E5E5E5;
+    background: #FFFFFF;
+    border-radius: 999px;
+    padding: 9px 18px 9px 14px;
+    font-size: 13px;
+    font-family: inherit;
+    color: #0A0A0A;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: border-color .15s, transform .15s;
+  }
+  .chip:hover { border-color: #0A0A0A; }
+  .chip[aria-pressed="true"] { border-color: #0A0A0A; background: #0A0A0A; color: #FFFFFF; }
+  .chip__swatch {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+  .chip__code {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    opacity: .7;
+    letter-spacing: 0.04em;
+  }
+
+  /* ===== Compare row: 3 mini previews side by side ===== */
+  .compare {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 48px;
+  }
+  .compare__card {
+    background: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .compare__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid #F0F0F0;
+  }
+  .compare__name {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 600;
+  }
+  .compare__swatch {
+    width: 14px; height: 14px; border-radius: 50%;
+  }
+  .compare__hex {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    color: #737373;
+    letter-spacing: 0.04em;
+  }
+  .compare__view {
+    transform: scale(0.62);
+    transform-origin: top left;
+    width: calc(100% / 0.62);
+    height: calc(620px / 0.62);
+    pointer-events: none;
+  }
+  .compare__viewport {
+    height: 620px;
+    overflow: hidden;
+  }
+
+  /* ===== Big preview ===== */
+  .stage-label {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin: 0 0 16px;
+  }
+  .stage-label h2 {
+    margin: 0;
+    font-family: "Noto Serif SC", "Songti SC", serif;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .stage-label small {
+    color: #737373;
+    font-size: 12px;
+    font-family: "JetBrains Mono", monospace;
+    letter-spacing: 0.08em;
+  }
+  .stage {
+    background: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    border-radius: 16px;
+    padding: 40px;
+  }
+
+  /* =================================================== */
+  /* =====  THEME · 黑红 (variables — JS will swap) ===== */
+  /* =================================================== */
+  .article {
+    --accent: #C8102E;
+    --accent-soft: #FEF2F2;
+    --accent-line: rgba(200, 16, 46, 0.18);
+    --ink: #0A0A0A;
+    --ink-2: #1F1F1F;
+    --ink-mute: #737373;
+    --border: #E5E5E5;
+    --code-bg: #FAFAF9;
+
+    max-width: 677px;
+    margin: 0 auto;
+    color: var(--ink-2);
+    font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-size: 16px;
+    line-height: 1.9;
+  }
+
+  /* Kicker (顶部 ZHIMO tag) */
+  .article__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink);
+    font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .article__tag::before {
+    content: "";
+    width: 24px; height: 2px;
+    background: var(--accent);
+  }
+
+  /* H1 */
+  .article h1 {
+    margin: 0 0 8px;
+    font-family: "Noto Serif SC", "Songti SC", STSong, Georgia, serif;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.26;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .article__h1-mark {
+    display: block;
+    width: 48px; height: 3px;
+    background: var(--accent);
+    margin: 0 0 28px;
+  }
+
+  /* H2 — 左侧短粗红色竖标 */
+  .article h2 {
+    position: relative;
+    margin: 36px 0 18px;
+    padding-left: 16px;
+    font-family: "Noto Serif SC", "Songti SC", STSong, Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.42;
+    color: var(--ink);
+  }
+  .article h2::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 8px; bottom: 8px;
+    width: 4px;
+    background: var(--accent);
+    border-radius: 1px;
+  }
+
+  /* H3 — 纯黑无装饰 */
+  .article h3 {
+    margin: 26px 0 12px;
+    font-family: "Noto Serif SC", "Songti SC", STSong, Georgia, serif;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.44;
+    color: var(--ink);
+  }
+
+  .article p {
+    margin: 0 0 16px;
+    color: var(--ink-2);
+    line-height: 1.9;
+    word-break: break-word;
+  }
+
+  /* strong 不变红 — 简洁原则 */
+  .article strong {
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .article em { font-style: italic; }
+
+  /* 链接：黑字 + 红色 1px 下划线 */
+  .article a {
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent);
+    padding-bottom: 1px;
+    transition: background .15s;
+  }
+  .article a:hover {
+    background: var(--accent-soft);
+  }
+
+  /* 行内 code */
+  .article code {
+    padding: 2px 6px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 4px;
+    font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.9em;
+    font-weight: 500;
+  }
+
+  /* 列表 */
+  .article ul, .article ol {
+    margin: 0 0 18px;
+    padding-left: 22px;
+    color: var(--ink-2);
+    font-size: 15px;
+    line-height: 1.9;
+  }
+  .article ul li::marker { color: var(--accent); }
+  .article ol li::marker { color: var(--ink-mute); font-variant-numeric: tabular-nums; }
+  .article li { margin-bottom: 4px; }
+  .article li:last-child { margin-bottom: 0; }
+
+  /* 引用 */
+  .article blockquote {
+    margin: 0 0 18px;
+    padding: 14px 20px;
+    border-left: 3px solid var(--accent);
+    background: var(--accent-soft);
+    color: var(--ink-2);
+    font-size: 15px;
+    line-height: 1.85;
+  }
+  .article blockquote p { margin: 0; }
+  .article blockquote p + p { margin-top: 10px; }
+
+  /* 代码块 */
+  .article pre {
+    margin: 0 0 18px;
+    padding: 16px 20px;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    font-size: 13.5px;
+    line-height: 1.72;
+    overflow-x: auto;
+  }
+  .article pre code {
+    display: block;
+    padding: 0;
+    background: transparent;
+    color: var(--ink);
+    font-weight: 400;
+    font-size: 13.5px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .article .tok-kw { color: var(--accent); font-weight: 600; }
+  .article .tok-str { color: #15803D; }
+  .article .tok-com { color: var(--ink-mute); font-style: italic; }
+  .article .tok-num { color: #B45309; }
+  .article .tok-fn { color: #1E40AF; }
+
+  /* 表格 */
+  .article table {
+    width: 100%;
+    margin: 0 0 20px;
+    border-collapse: collapse;
+    font-size: 14px;
+    line-height: 1.75;
+  }
+  .article th {
+    padding: 10px 12px;
+    text-align: left;
+    color: var(--ink);
+    font-weight: 600;
+    background: #FAFAFA;
+    border-bottom: 2px solid var(--ink);
+  }
+  .article td {
+    padding: 10px 12px;
+    color: var(--ink-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .article tr:last-child td { border-bottom: 0; }
+
+  /* HR */
+  .article hr {
+    border: 0;
+    height: 1px;
+    background: var(--border);
+    margin: 32px auto;
+    width: 100%;
+  }
+
+  /* 图片 */
+  .article figure {
+    margin: 0 0 20px;
+  }
+  .article figure img,
+  .article .figure-ph {
+    display: block;
+    width: 100%;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .article .figure-ph {
+    aspect-ratio: 16 / 9;
+    background:
+      linear-gradient(135deg, transparent 49.5%, var(--border) 49.5% 50.5%, transparent 50.5%),
+      #FAFAFA;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--ink-mute);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    font-family: "JetBrains Mono", monospace;
+  }
+  .article figcaption {
+    margin-top: 8px;
+    text-align: center;
+    color: var(--ink-mute);
+    font-size: 12px;
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* 文章脚标 */
+  .article__foot {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--ink-mute);
+    font-size: 12px;
+    font-family: "JetBrains Mono", monospace;
+    letter-spacing: 0.08em;
+  }
+  .article__foot-dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  /* Spec sheet */
+  .spec {
+    margin-top: 64px;
+    background: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    border-radius: 16px;
+    padding: 32px 40px;
+  }
+  .spec h3 {
+    margin: 0 0 20px;
+    font-family: "Noto Serif SC", serif;
+    font-size: 18px;
+  }
+  .spec__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .spec__cell {
+    border: 1px solid #F0F0F0;
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .spec__label {
+    color: #737373; font-size: 11px;
+    font-family: "JetBrains Mono", monospace;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .spec__value {
+    color: #0A0A0A; font-size: 14px; font-weight: 500;
+    font-family: "JetBrains Mono", monospace;
+  }
+  .spec__swatch-row { display: flex; align-items: center; gap: 8px; }
+  .spec__swatch { width: 18px; height: 18px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.08); }
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="page__kicker">ZHIMO · THEME PREVIEW</p>
+  <h1 class="page__title">黑红主题 · 简洁清晰版</h1>
+  <p class="page__sub">
+    通用万能向定位 · 纯白底 + 三级灰阶文字 + 单点红色 accent。红色只用于结构标记（H1 短横、H2 竖标、引用左边、行内代码、链接下划线），不用于强调文字。<br />
+    下方提供 3 个红色色阶变体并排对比，顶部 chip 可切换大预览。
+  </p>
+
+  <div class="chips" role="tablist" aria-label="红色变体切换">
+    <button class="chip" aria-pressed="false" data-variant="A">
+      <span class="chip__swatch" style="background:#D7263D"></span>
+      朱砂红
+      <span class="chip__code">#D7263D</span>
+    </button>
+    <button class="chip" aria-pressed="true" data-variant="B">
+      <span class="chip__swatch" style="background:#C8102E"></span>
+      中国红
+      <span class="chip__code">#C8102E</span>
+    </button>
+    <button class="chip" aria-pressed="false" data-variant="C">
+      <span class="chip__swatch" style="background:#991B1B"></span>
+      暗砖红
+      <span class="chip__code">#991B1B</span>
+    </button>
+  </div>
+
+  <!-- ===== Compare row ===== -->
+  <div class="compare" id="compareRow"></div>
+
+  <!-- ===== Big preview ===== -->
+  <div class="stage-label">
+    <h2>大尺寸细看 <small id="currentName">— 中国红 #C8102E</small></h2>
+    <small>↑ 点上方 chip 切换</small>
+  </div>
+  <section class="stage">
+    <article class="article" id="bigArticle"></article>
+  </section>
+
+  <!-- ===== Spec sheet ===== -->
+  <div class="spec">
+    <h3>设计规范 · 集成时直接抄</h3>
+    <div class="spec__grid">
+      <div class="spec__cell">
+        <div class="spec__label">背景</div>
+        <div class="spec__swatch-row"><span class="spec__swatch" style="background:#FFFFFF"></span><div class="spec__value">#FFFFFF</div></div>
+      </div>
+      <div class="spec__cell">
+        <div class="spec__label">标题 / 主黑</div>
+        <div class="spec__swatch-row"><span class="spec__swatch" style="background:#0A0A0A"></span><div class="spec__value">#0A0A0A</div></div>
+      </div>
+      <div class="spec__cell">
+        <div class="spec__label">正文 / 次黑</div>
+        <div class="spec__swatch-row"><span class="spec__swatch" style="background:#1F1F1F"></span><div class="spec__value">#1F1F1F</div></div>
+      </div>
+      <div class="spec__cell">
+        <div class="spec__label">caption / mute</div>
+        <div class="spec__swatch-row"><span class="spec__swatch" style="background:#737373"></span><div class="spec__value">#737373</div></div>
+      </div>
+      <div class="spec__cell">
+        <div class="spec__label">accent 红 (B)</div>
+        <div class="spec__swatch-row"><span class="spec__swatch" style="background:#C8102E"></span><div class="spec__value">#C8102E</div></div>
+      </div>
+      <div class="spec__cell">
+        <div class="spec__label">accent soft</div>
+        <div class="spec__swatch-row"><span class="spec__swatch" style="background:#FEF2F2"></span><div class="spec__value">#FEF2F2</div></div>
+      </div>
+      <div class="spec__cell">
+        <div class="spec__label">分隔线</div>
+        <div class="spec__swatch-row"><span class="spec__swatch" style="background:#E5E5E5"></span><div class="spec__value">#E5E5E5</div></div>
+      </div>
+      <div class="spec__cell">
+        <div class="spec__label">代码块底</div>
+        <div class="spec__swatch-row"><span class="spec__swatch" style="background:#FAFAF9"></span><div class="spec__value">#FAFAF9</div></div>
+      </div>
+      <div class="spec__cell">
+        <div class="spec__label">H1 字号 / 字族</div>
+        <div class="spec__value">34px · Serif</div>
+      </div>
+      <div class="spec__cell">
+        <div class="spec__label">H2 字号 / 装饰</div>
+        <div class="spec__value">22px · 左竖标 4×</div>
+      </div>
+      <div class="spec__cell">
+        <div class="spec__label">正文字号 / 行高</div>
+        <div class="spec__value">16px · 1.9</div>
+      </div>
+      <div class="spec__cell">
+        <div class="spec__label">最大宽度</div>
+        <div class="spec__value">677px</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Article content template ===== -->
+<template id="articleTpl">
+  <span class="article__tag">ZHIMO · 模板预览</span>
+  <h1>把一篇好文章的所有组件，整理在同一个页面上</h1>
+  <span class="article__h1-mark"></span>
+
+  <p>这是一份用于验证<strong>黑红主题</strong>在公众号场景下视觉一致性的标准样例。所有可能出现的元素——标题、段落、引用、列表、代码、表格、图片、分隔线、行内 <code>code</code> 与<a href="#">链接</a>——都被收录在这一篇里。</p>
+
+  <p>核心设计原则：<em>红色只做结构标记，不做文字强调</em>。这样无论你写技术、生活、商业还是知识卡片，配色都不会喧宾夺主。</p>
+
+  <h2>一、信息层级如何工作</h2>
+  <p>三级标题用纯黑色 + 衬线字体建立秩序，靠字号与装饰区分：</p>
+  <ul>
+    <li><strong>H1</strong>：34 px，下方一条 48 px 短红横线</li>
+    <li><strong>H2</strong>：22 px，左侧 4 × 24 红色竖标</li>
+    <li><strong>H3</strong>：18 px，纯黑无装饰</li>
+  </ul>
+
+  <h3>1.1 列表的可读性</h3>
+  <p>无序列表的项目符号取主题红，有序列表用次级灰——细节差异在长文里能拉开很多。</p>
+  <ol>
+    <li>开头点出主题</li>
+    <li>给读者一个明确的承诺</li>
+    <li>用 H2 切分章节</li>
+    <li>每章不超过三段</li>
+  </ol>
+
+  <h2>二、引用与代码</h2>
+
+  <blockquote>
+    <p>这是一段引用。3 px 左红边 + 浅红底 (#FEF2F2)，比白底更立体，但又克制——读者扫过时能立刻识别这是「他人观点」，而不是正文。</p>
+  </blockquote>
+
+  <p>行内代码用浅红底配深红字，让 <code>variable</code>、<code>API</code>、<code>--theme-red</code> 之类的技术名词在中文里清晰跳出。代码块则采用更柔和的米白底 + 左红边：</p>
+
+  <pre><code><span class="tok-com">// 主题切换示例</span>
+<span class="tok-kw">const</span> theme = {
+  accent: <span class="tok-str">"#C8102E"</span>,
+  ink:    <span class="tok-str">"#0A0A0A"</span>,
+  bg:     <span class="tok-str">"#FFFFFF"</span>,
+};
+
+<span class="tok-kw">function</span> <span class="tok-fn">apply</span>(t) {
+  document.documentElement
+    .style.setProperty(<span class="tok-str">"--accent"</span>, t.accent);
+}</code></pre>
+
+  <h2>三、图片与表格</h2>
+
+  <figure>
+    <div class="figure-ph">image placeholder · 16 / 9</div>
+    <figcaption>图片采用 1 px 细灰边，不再用 3 px 红色描边——红色留给结构</figcaption>
+  </figure>
+
+  <p>表格用顶部加粗黑色分隔线突出表头，行间细灰线，避免框线把数据切成牢笼：</p>
+
+  <table>
+    <thead>
+      <tr><th>元素</th><th>颜色</th><th>装饰</th><th>用途</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>H1</td><td>#0A0A0A</td><td>下方 48 px 短红横</td><td>文章主标题</td></tr>
+      <tr><td>H2</td><td>#0A0A0A</td><td>左侧 4 × 24 红竖标</td><td>章节切分</td></tr>
+      <tr><td>引用</td><td>#1F1F1F on #FEF2F2</td><td>3 px 左红边</td><td>他人观点</td></tr>
+      <tr><td>行内 code</td><td>red on red-soft</td><td>—</td><td>技术名词</td></tr>
+      <tr><td>链接</td><td>#0A0A0A</td><td>1 px 红下划线</td><td>外部跳转</td></tr>
+    </tbody>
+  </table>
+
+  <hr />
+
+  <h2>四、结语</h2>
+  <p>少即是多。一篇文章里，红色出现的次数应当 <strong>少于 10 处</strong>——多了就成了背景噪音，少了反而每一次出现都有分量。</p>
+
+  <div class="article__foot">
+    <span><span class="article__foot-dot"></span>ZHIMOWRITER</span>
+    <span>END · 2026</span>
+  </div>
+</template>
+
+<script>
+  const VARIANTS = {
+    A: { name: '朱砂红',  accent: '#D7263D', soft: '#FFF1F3', line: 'rgba(215,38,61,0.18)' },
+    B: { name: '中国红',  accent: '#C8102E', soft: '#FEF2F2', line: 'rgba(200,16,46,0.18)' },
+    C: { name: '暗砖红',  accent: '#991B1B', soft: '#FEF2F2', line: 'rgba(153,27,27,0.18)' },
+  };
+
+  const tpl = document.getElementById('articleTpl');
+  const compareRow = document.getElementById('compareRow');
+  const bigArticle = document.getElementById('bigArticle');
+
+  function applyVariantTo(node, v) {
+    node.style.setProperty('--accent', v.accent);
+    node.style.setProperty('--accent-soft', v.soft);
+    node.style.setProperty('--accent-line', v.line);
+  }
+
+  function fillArticle(node) {
+    node.innerHTML = '';
+    node.appendChild(tpl.content.cloneNode(true));
+  }
+
+  // Build compare row (3 mini cards)
+  ['A','B','C'].forEach(key => {
+    const v = VARIANTS[key];
+    const card = document.createElement('div');
+    card.className = 'compare__card';
+    card.innerHTML = `
+      <div class="compare__head">
+        <div class="compare__name">
+          <span class="compare__swatch" style="background:${v.accent}"></span>
+          ${v.name}
+        </div>
+        <span class="compare__hex">${v.accent}</span>
+      </div>
+      <div class="compare__viewport">
+        <div class="compare__view"><article class="article"></article></div>
+      </div>
+    `;
+    compareRow.appendChild(card);
+    const inner = card.querySelector('.article');
+    applyVariantTo(inner, v);
+    fillArticle(inner);
+  });
+
+  // Big preview
+  function setBig(key) {
+    const v = VARIANTS[key];
+    applyVariantTo(bigArticle, v);
+    fillArticle(bigArticle);
+    document.getElementById('currentName').textContent = `— ${v.name} ${v.accent}`;
+    document.querySelectorAll('.chip').forEach(c => {
+      c.setAttribute('aria-pressed', c.dataset.variant === key ? 'true' : 'false');
+    });
+  }
+  setBig('B');
+
+  document.querySelectorAll('.chip').forEach(c => {
+    c.addEventListener('click', () => setBig(c.dataset.variant));
+  });
+</script>
+</body>
+</html>

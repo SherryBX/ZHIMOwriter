@@ -1,6 +1,7 @@
 import hljs from "highlight.js";
 import MarkdownIt from "markdown-it";
-import { normalizeMarkdownImageSource, resolvePreviewImageSrc } from "./imagePath";
+import { isImageFailed, normalizeMarkdownImageSource, resolvePreviewImageSrc } from "./imagePath";
+import { getTheme, type ThemeId } from "../themes/themes";
 
 const topArticleLabel = "ZHIMO";
 
@@ -31,7 +32,7 @@ function createMarkdownParser(imageRenderer: (src: string, alt: string, caption:
   const parser = new MarkdownIt({
     html: false,
     linkify: true,
-    breaks: false,
+    breaks: true,
     typographer: false,
     highlight: highlightCodeBlock,
   });
@@ -98,10 +99,11 @@ function decoratePreviewMarkup(html: string) {
 
   for (const image of root.querySelectorAll("img.preview-phone__image")) {
     const originalSrc = image.getAttribute("data-original-src") ?? image.getAttribute("src") ?? "";
-    image.setAttribute("data-preview-src", resolvePreviewImageSrc(originalSrc));
+    const previewSrc = resolvePreviewImageSrc(originalSrc);
+    image.setAttribute("data-preview-src", previewSrc);
 
     const wrapper = doc.createElement("span");
-    wrapper.className = "preview-phone__figure";
+    wrapper.className = isImageFailed(previewSrc) ? "preview-phone__figure is-failed" : "preview-phone__figure";
 
     const fallback = doc.createElement("span");
     fallback.className = "preview-phone__image-fallback";
@@ -139,20 +141,54 @@ function decoratePreviewMarkup(html: string) {
   return root.innerHTML;
 }
 
+const fileUrlPattern = /(!\[[^\]]*\]\()(file:(\/\/\/|\/\/localhost\/|\/)[A-Za-z]:[^)]+)(\))/gi;
+const windowsBackslashPattern = /(!\[[^\]]*\]\()([A-Za-z]:[\\/][^)]+)(\))/gi;
+
 export function normalizeMarkdownForRender(markdown: string) {
-  return markdown;
+  return markdown
+    .replace(fileUrlPattern, (_match, prefix, src, _protocol, suffix) => {
+      const normalized = normalizeMarkdownImageSource(src);
+      return `${prefix}${normalized}${suffix}`;
+    })
+    .replace(windowsBackslashPattern, (_match, prefix, src, suffix) => {
+      const normalized = normalizeMarkdownImageSource(src);
+      return `${prefix}${normalized}${suffix}`;
+    });
 }
 
-export function renderPreviewHtml(markdown: string) {
+import { getTheme, type ThemeId } from "../themes/themes";
+
+export function renderPreviewHtml(markdown: string, themeId: ThemeId) {
   const normalized = normalizeMarkdownForRender(markdown);
-  return decoratePreviewMarkup(
-    `<div class="wechat-article__top-tag">${topArticleLabel}</div><div class="wechat-article__top-divider"><span class="wechat-article__top-divider-line"><br /></span></div>${previewMarkdown.render(normalized)}`,
-  );
+  const content = previewMarkdown.render(normalized);
+  const theme = getTheme(themeId);
+
+  if (theme.headerFooterVisible) {
+    const header = `<div class="wechat-article__header"><span class="wechat-article__header-line"></span><span class="wechat-article__header-text">${topArticleLabel}</span><span class="wechat-article__header-line"></span></div>`;
+    const footer = `<div class="wechat-article__footer"><span class="wechat-article__header-line"></span><span class="wechat-article__header-text">END</span><span class="wechat-article__header-line"></span></div>`;
+    return decoratePreviewMarkup(`${header}${content}${footer}`);
+  }
+
+  // Restore original top tag and divider for themes like Classic
+  const topTag = `<div class="wechat-article__top-tag">${topArticleLabel}</div>`;
+  const topDivider = theme.topDividerVisible ? `<div class="wechat-article__top-divider"></div>` : "";
+  return decoratePreviewMarkup(`${topTag}${topDivider}${content}`);
 }
 
-export function renderStandardMarkdownHtml(markdown: string) {
+export function renderStandardMarkdownHtml(markdown: string, themeId: ThemeId) {
   const normalized = normalizeMarkdownForRender(markdown);
-  return `<div class="wechat-article__top-tag">${topArticleLabel}</div><div class="wechat-article__top-divider"><span class="wechat-article__top-divider-line"><br /></span></div>${standardMarkdown.render(normalized)}`;
+  const content = standardMarkdown.render(normalized);
+  const theme = getTheme(themeId);
+
+  if (theme.headerFooterVisible) {
+    const header = `<div class="wechat-article__header"><span class="wechat-article__header-line"></span><span class="wechat-article__header-text">${topArticleLabel}</span><span class="wechat-article__header-line"></span></div>`;
+    const footer = `<div class="wechat-article__footer"><span class="wechat-article__header-line"></span><span class="wechat-article__header-text">END</span><span class="wechat-article__header-line"></span></div>`;
+    return `${header}${content}${footer}`;
+  }
+
+  const topTag = `<div class="wechat-article__top-tag">${topArticleLabel}</div>`;
+  const topDivider = theme.topDividerVisible ? `<div class="wechat-article__top-divider"></div>` : "";
+  return `${topTag}${topDivider}${content}`;
 }
 
 export function extractDocumentTitle(markdown: string) {

@@ -53,3 +53,17 @@ export function resolvePreviewImageSrc(src: string) {
 
   return `/__local-image?path=${encodeURIComponent(normalized)}`;
 }
+
+const failedImageCache = new Set<string>();
+
+export function markImageFailed(src: string) {
+  failedImageCache.add(src);
+}
+
+export function isImageFailed(src: string) {
+  return failedImageCache.has(src);
+}
+
+export function markImageSuccess(src: string) {
+  failedImageCache.delete(src);
+}

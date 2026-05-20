@@ -1,20 +1,9 @@
 import type { PreviewNode } from "./markdown";
 import { isLocalAbsoluteImagePath, isRemoteImageUrl, normalizeMarkdownImageSource, resolvePreviewImageSrc } from "./imagePath";
 import { renderStandardMarkdownHtml } from "./markdownRenderer";
+import { defaultThemeId, getTheme, type ThemeId, type ThemeSpec } from "../themes/themes";
 
 export { resolvePreviewImageSrc } from "./imagePath";
-
-const syntaxTokenStyles: Array<[selector: string, style: string]> = [
-  [".hljs-comment, .hljs-quote", "color:#8a8a82;font-style:italic;"],
-  [".hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-name", "color:#c23616;font-weight:600;"],
-  [".hljs-string, .hljs-doctag, .hljs-template-tag, .hljs-template-variable", "color:#2f855a;"],
-  [".hljs-title, .hljs-title.class_, .hljs-title.class_.inherited__", "color:#2c5282;"],
-  [".hljs-number, .hljs-symbol, .hljs-bullet, .hljs-variable, .hljs-meta", "color:#b7791f;"],
-  [".hljs-built_in, .hljs-type, .hljs-class", "color:#7b341e;"],
-  [".hljs-attr, .hljs-attribute, .hljs-regexp, .hljs-link", "color:#2b6cb0;"],
-  [".hljs-function .hljs-title, .hljs-title.function_", "color:#2c5282;"],
-  [".hljs-params", "color:#5e5a54;"],
-];
 
 function arrayBufferToBase64(buffer: ArrayBuffer) {
   let binary = "";
@@ -117,21 +106,21 @@ function replaceElementWithStyledSpan(element: Element, doc: Document, style: st
   return replacement;
 }
 
-function applySyntaxHighlightInlineStyles(root: ParentNode) {
-  for (const [selector, style] of syntaxTokenStyles) {
+function applySyntaxHighlightInlineStyles(root: ParentNode, theme: ThemeSpec) {
+  for (const [selector, style] of theme.syntaxTokenStyles) {
     for (const node of root.querySelectorAll(selector)) {
       applyInlineStyle(node, style);
     }
   }
 }
 
-async function decorateWechatHtml(html: string) {
+async function decorateWechatHtml(html: string, theme: ThemeSpec) {
   if (typeof DOMParser === "undefined") {
-    return `<section style="max-width:677px;margin:0 auto;padding:24px 16px 32px;box-sizing:border-box;color:#1a1a18;background:#FAFAF9;font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;">${html}</section>`;
+    return `<section style="${theme.container}">${html}</section>`;
   }
 
   const doc = new DOMParser().parseFromString(
-    `<section style="max-width:677px;margin:0 auto;padding:24px 16px 32px;box-sizing:border-box;color:#1a1a18;background:#FAFAF9;font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;">${html}</section>`,
+    `<section style="${theme.container}">${html}</section>`,
     "text/html",
   );
 
@@ -141,35 +130,56 @@ async function decorateWechatHtml(html: string) {
     return html;
   }
 
-  for (const heading of root.querySelectorAll("h1")) {
-    applyInlineStyle(
-      heading,
-      "margin:0 0 24px;color:#1a1a18;font-size:34px;font-weight:700;line-height:1.28;letter-spacing:0.01em;font-family:'Noto Serif SC','Songti SC',STSong,Georgia,serif;",
-    );
+  for (const h1 of Array.from(root.querySelectorAll("h1"))) {
+    applyInlineStyle(h1, theme.h1);
+
+    if (theme.h1MarkBefore) {
+      const mark = doc.createElement("span");
+      mark.setAttribute("style", theme.h1MarkBefore);
+      mark.textContent = "「";
+      h1.insertBefore(mark, h1.firstChild);
+    }
+
+    if (theme.h1MarkAfter) {
+      const mark = doc.createElement("span");
+      mark.setAttribute("style", theme.h1MarkAfter);
+      mark.textContent = "」";
+      h1.appendChild(mark);
+    }
   }
 
+  let h2Index = 0;
   for (const heading of root.querySelectorAll("h2")) {
-    applyInlineStyle(
-      heading,
-      "margin:18px 0 18px;color:#1a1a18;font-size:24px;font-weight:700;line-height:1.42;font-family:'Noto Serif SC','Songti SC',STSong,Georgia,serif;",
-    );
+    h2Index += 1;
+    applyInlineStyle(heading, theme.h2);
+
+    if (theme.h2AutoNumber) {
+      const n = String(h2Index).padStart(2, "0");
+      const text = theme.h2AutoNumber.format.replace("{n}", n);
+      const prefix = doc.createElement("span");
+      prefix.textContent = text;
+      applyInlineStyle(prefix, theme.h2AutoNumber.style);
+      heading.insertBefore(prefix, heading.firstChild);
+    }
   }
 
   for (const heading of root.querySelectorAll("h3")) {
-    applyInlineStyle(
-      heading,
-      "margin:26px 0 16px;color:#1a1a18;font-size:19px;font-weight:600;line-height:1.44;font-family:'Noto Serif SC','Songti SC',STSong,Georgia,serif;",
-    );
+    applyInlineStyle(heading, theme.h3);
+
+    if (theme.h3PrefixMark) {
+      const prefix = doc.createElement("span");
+      prefix.textContent = theme.h3PrefixMark.content;
+      applyInlineStyle(prefix, theme.h3PrefixMark.style);
+      heading.insertBefore(prefix, heading.firstChild);
+    }
   }
 
   for (const paragraph of root.querySelectorAll("p")) {
-    const style = isMediaOnlyParagraph(paragraph)
-      ? "margin:0 0 10px;"
-      : "margin:0 0 16px;color:#4a4a45;font-size:16px;line-height:1.9;word-break:break-word;";
-
+    const style = isMediaOnlyParagraph(paragraph) ? theme.mediaParagraph : theme.paragraph;
     applyInlineStyle(paragraph, style);
   }
 
+  let figureIndex = 0;
   for (const paragraph of root.querySelectorAll("p")) {
     if (!isMediaOnlyParagraph(paragraph)) {
       continue;
@@ -182,37 +192,61 @@ async function decorateWechatHtml(html: string) {
       continue;
     }
 
+    figureIndex += 1;
     const captionElement = doc.createElement("span");
     captionElement.className = "wechat-image-caption";
-    captionElement.textContent = caption;
+
+    if (theme.figurePrefix) {
+      const n = String(figureIndex).padStart(2, "0");
+      const prefixText = theme.figurePrefix.format.replace("{n}", n);
+      const prefix = doc.createElement("span");
+      prefix.textContent = prefixText;
+      applyInlineStyle(prefix, theme.figurePrefix.style);
+      captionElement.append(prefix);
+      captionElement.append(doc.createTextNode(caption));
+    } else {
+      captionElement.textContent = caption;
+    }
+
     paragraph.append(captionElement);
   }
 
-  for (const quote of root.querySelectorAll("blockquote")) {
-    applyInlineStyle(
-      quote,
-      "margin:0 0 18px;display:flex;flex-direction:column;justify-content:center;min-height:72px;padding:16px 20px;border-left:3px solid #c23616;border-radius:0 8px 8px 0;background:#ffffff;color:#4a4a45;font-size:15px;line-height:1.9;",
-    );
-  }
+  for (const blockquote of Array.from(root.querySelectorAll("blockquote"))) {
+    applyInlineStyle(blockquote, theme.blockquote);
 
-  for (const paragraph of root.querySelectorAll("blockquote p")) {
-    applyInlineStyle(paragraph, "margin:0;width:100%;");
+    if (theme.blockquoteMarkBefore) {
+      const mark = doc.createElement("span");
+      mark.setAttribute("style", theme.blockquoteMarkBefore);
+      mark.textContent = "“";
+      blockquote.insertBefore(mark, blockquote.firstChild);
+    }
+
+    if (theme.blockquoteMarkAfter) {
+      const mark = doc.createElement("span");
+      mark.setAttribute("style", theme.blockquoteMarkAfter);
+      mark.textContent = "”";
+      blockquote.appendChild(mark);
+    }
+
+    for (const p of blockquote.querySelectorAll("p")) {
+      applyInlineStyle(p, theme.blockquoteParagraph);
+    }
   }
 
   for (const list of root.querySelectorAll("ul")) {
-    applyInlineStyle(list, "margin:0 0 18px;padding-left:24px;color:#4a4a45;font-size:15px;line-height:1.9;");
+    applyInlineStyle(list, theme.unorderedList);
   }
 
   for (const list of root.querySelectorAll("ol")) {
-    applyInlineStyle(list, "margin:0 0 18px;padding-left:24px;color:#4a4a45;font-size:15px;line-height:1.9;");
+    applyInlineStyle(list, theme.orderedList);
   }
 
   for (const item of root.querySelectorAll("li")) {
-    applyInlineStyle(item, "margin:0 0 6px;");
+    applyInlineStyle(item, theme.listItem);
   }
 
   for (const link of root.querySelectorAll("a")) {
-    applyInlineStyle(link, "color:#2b6cb0;text-decoration:none;border-bottom:1px solid #a0c4e8;padding-bottom:1px;");
+    applyInlineStyle(link, theme.link);
   }
 
   for (const inlineCode of root.querySelectorAll("code")) {
@@ -220,50 +254,48 @@ async function decorateWechatHtml(html: string) {
       continue;
     }
 
-    applyInlineStyle(
-      inlineCode,
-      "padding:2px 6px;border-radius:4px;background:#f5f5f3;color:#1a1a18;font-size:0.92em;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;",
-    );
+    applyInlineStyle(inlineCode, theme.inlineCode);
   }
 
   for (const block of root.querySelectorAll("pre")) {
-    applyInlineStyle(
-      block,
-      "margin:0 0 18px;max-width:100%;padding:14px 18px;overflow:hidden;border-radius:8px;border:1px solid #e5e4e0;background:#fcfbf8;color:#1a1a18;font-size:14px;line-height:1.72;box-sizing:border-box;",
-    );
+    applyInlineStyle(block, theme.preBlock);
   }
 
   for (const code of root.querySelectorAll("pre code")) {
-    applyInlineStyle(
-      code,
-      "display:block;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;background:transparent;color:#1a1a18;",
-    );
+    applyInlineStyle(code, theme.preCode);
   }
 
-  applySyntaxHighlightInlineStyles(root);
+  applySyntaxHighlightInlineStyles(root, theme);
 
   for (const hr of root.querySelectorAll("hr")) {
-    applyInlineStyle(hr, "margin:30px 0;border:0;border-top:1px solid rgba(120,120,112,0.18);");
+    if (theme.hrContent) {
+      const replacement = doc.createElement("p");
+      replacement.textContent = theme.hrContent;
+      applyInlineStyle(replacement, theme.hr);
+      hr.replaceWith(replacement);
+    } else {
+      applyInlineStyle(hr, theme.hr);
+    }
   }
 
   for (const strong of Array.from(root.querySelectorAll("strong"))) {
-    replaceElementWithStyledSpan(strong, doc, "font-weight:600;color:#c23616;");
+    replaceElementWithStyledSpan(strong, doc, theme.strong);
   }
 
   for (const em of root.querySelectorAll("em")) {
-    applyInlineStyle(em, "font-style:italic;");
+    applyInlineStyle(em, theme.em);
   }
 
   for (const table of root.querySelectorAll("table")) {
-    applyInlineStyle(table, "width:100%;margin:0 0 20px;border-collapse:collapse;font-size:14px;line-height:1.75;");
+    applyInlineStyle(table, theme.table);
   }
 
   for (const head of root.querySelectorAll("th")) {
-    applyInlineStyle(head, "padding:10px 12px;border:1px solid #e5e4e0;background:#f8f6f2;color:#1a1a18;text-align:left;");
+    applyInlineStyle(head, theme.tableHead);
   }
 
   for (const cell of root.querySelectorAll("td")) {
-    applyInlineStyle(cell, "padding:10px 12px;border:1px solid #e5e4e0;color:#4a4a45;");
+    applyInlineStyle(cell, theme.tableCell);
   }
 
   for (const image of root.querySelectorAll("img")) {
@@ -272,34 +304,56 @@ async function decorateWechatHtml(html: string) {
     image.setAttribute("src", await resolveWechatImageSrc(originalSrc));
 
     image.removeAttribute("data-original-src");
-    applyInlineStyle(
-      image,
-      "display:block;width:100%;max-width:100%;border-radius:6px;border:3px solid #C23616;box-shadow:none;",
-    );
+    applyInlineStyle(image, theme.image);
   }
 
   for (const caption of root.querySelectorAll(".wechat-image-caption")) {
-    applyInlineStyle(
-      caption,
-      "display:block;margin-top:8px;color:#8a8a82;font-size:12px;line-height:1.7;text-align:center;font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;",
-    );
+    applyInlineStyle(caption, theme.caption);
   }
 
   for (const tag of Array.from(root.querySelectorAll(".wechat-article__top-tag"))) {
-    const styledTag = replaceElementWithStyledSpan(
-      tag,
-      doc,
-      "display:block;margin:0 0 18px;color:#C23616;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:12px;letter-spacing:0.28em;text-transform:uppercase;",
-    );
+    const styledTag = replaceElementWithStyledSpan(tag, doc, theme.topTag);
     styledTag.className = "wechat-article__top-tag";
+
+    if (theme.topTagLeadingBar) {
+      const leadingBar = doc.createElement("span");
+      leadingBar.setAttribute("style", theme.topTagLeadingBar);
+      styledTag.insertBefore(leadingBar, styledTag.firstChild);
+    }
   }
 
-  for (const divider of root.querySelectorAll(".wechat-article__top-divider")) {
-    applyInlineStyle(divider, "margin:0 0 16px;");
+  for (const header of Array.from(root.querySelectorAll(".wechat-article__header"))) {
+    applyInlineStyle(header, theme.headerContainer);
+    for (const line of header.querySelectorAll(".wechat-article__header-line")) {
+      applyInlineStyle(line, theme.headerLine);
+    }
+    for (const text of header.querySelectorAll(".wechat-article__header-text")) {
+      applyInlineStyle(text, theme.headerText);
+    }
   }
 
-  for (const dividerLine of root.querySelectorAll(".wechat-article__top-divider-line")) {
-    applyInlineStyle(dividerLine, "display:block;height:0;overflow:hidden;border-top:1px solid rgba(194,54,22,0.18);");
+  for (const footer of Array.from(root.querySelectorAll(".wechat-article__footer"))) {
+    applyInlineStyle(footer, theme.footerContainer);
+    for (const line of footer.querySelectorAll(".wechat-article__header-line")) {
+      applyInlineStyle(line, theme.headerLine);
+    }
+    for (const text of footer.querySelectorAll(".wechat-article__header-text")) {
+      applyInlineStyle(text, theme.headerText);
+    }
+  }
+
+  if (theme.topDividerVisible) {
+    for (const divider of root.querySelectorAll(".wechat-article__top-divider")) {
+      applyInlineStyle(divider, theme.topDivider);
+    }
+
+    for (const dividerLine of root.querySelectorAll(".wechat-article__top-divider-line")) {
+      applyInlineStyle(dividerLine, theme.topDividerLine);
+    }
+  } else {
+    for (const divider of root.querySelectorAll(".wechat-article__top-divider")) {
+      divider.remove();
+    }
   }
 
   return root.outerHTML;
@@ -339,27 +393,40 @@ function copyWithExecCommand(html: string, plainText: string) {
   }
 }
 
-export async function buildWechatHtml(markdownOrNodes: string | PreviewNode[]) {
+export async function buildWechatHtml(markdownOrNodes: string | PreviewNode[], themeId: ThemeId = defaultThemeId) {
   const markdown = toMarkdown(markdownOrNodes);
-  const html = renderStandardMarkdownHtml(markdown);
-  return decorateWechatHtml(html);
+  const html = renderStandardMarkdownHtml(markdown, themeId);
+  return decorateWechatHtml(html, getTheme(themeId));
 }
 
-export async function copyWechatContent(markdownOrNodes: string | PreviewNode[], markdown?: string) {
-  const sourceMarkdown = toMarkdown(markdownOrNodes, markdown);
-  const html = await buildWechatHtml(sourceMarkdown);
+export async function copyWechatContent(
+  markdownOrNodes: string | PreviewNode[],
+  markdownOrTheme?: string | ThemeId,
+  themeId: ThemeId = defaultThemeId,
+) {
+  let resolvedMarkdown: string;
+  let resolvedTheme: ThemeId = themeId;
+
+  if (markdownOrTheme === "classic" || markdownOrTheme === "blackred") {
+    resolvedMarkdown = toMarkdown(markdownOrNodes);
+    resolvedTheme = markdownOrTheme;
+  } else {
+    resolvedMarkdown = toMarkdown(markdownOrNodes, markdownOrTheme);
+  }
+
+  const html = await buildWechatHtml(resolvedMarkdown, resolvedTheme);
 
   try {
-    if (await copyWithClipboardItem(html, sourceMarkdown)) {
+    if (await copyWithClipboardItem(html, resolvedMarkdown)) {
       return;
     }
   } catch {
-    if (copyWithExecCommand(html, sourceMarkdown)) {
+    if (copyWithExecCommand(html, resolvedMarkdown)) {
       return;
     }
   }
 
-  if (copyWithExecCommand(html, sourceMarkdown)) {
+  if (copyWithExecCommand(html, resolvedMarkdown)) {
     return;
   }
 

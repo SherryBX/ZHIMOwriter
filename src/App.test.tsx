@@ -3,6 +3,19 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 
+async function readBlobAsText(blob: Blob): Promise<string> {
+  if (typeof blob.text === "function") {
+    return blob.text();
+  }
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsText(blob);
+  });
+}
+
 const previewImagePath = "/__local-image?path=E%3A%2F%E7%B4%A0%E6%9D%90%E5%BA%93%2F%E6%98%A5%E5%AD%A3%2F%E5%B0%81%E9%9D%A2.png";
 const copiedImagePath = "/__local-image?path=E%3A%2F%E7%B4%A0%E6%9D%90%2F%E5%B0%81%E9%9D%A2.png";
 const originalCreateObjectURL = URL.createObjectURL;
@@ -41,15 +54,6 @@ describe("App", () => {
 
   it("syncs markdown input and absolute-path images into the preview", async () => {
     const user = userEvent.setup();
-    const fetchMock = vi.fn().mockResolvedValue(
-      new Response(new Uint8Array([137, 80, 78, 71]), {
-        status: 200,
-        headers: { "content-type": "image/png" },
-      }),
-    );
-
-    mockPreviewImageLoading("blob:preview-cover");
-    vi.stubGlobal("fetch", fetchMock);
 
     render(<App />);
 
@@ -61,15 +65,12 @@ describe("App", () => {
     await waitFor(() => {
       expect(screen.getByRole("heading", { level: 1, name: "New Title" })).toBeInTheDocument();
     });
-    await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith(
-        previewImagePath,
-        expect.objectContaining({ cache: "force-cache" }),
-      );
-    });
 
-    expect(screen.getByRole("img", { name: "cover" })).toHaveAttribute("src", "blob:preview-cover");
-    expect(screen.getByRole("img", { name: "cover" })).toHaveAttribute("data-original-src", "E:/素材库/春季/封面.png");
+    const article = screen.getByRole("article");
+    const image = article.querySelector<HTMLImageElement>('img[alt="cover"]');
+    expect(image).toBeTruthy();
+    expect(image).toHaveAttribute("data-original-src", "E:/素材库/春季/封面.png");
+    expect(image).toHaveAttribute("data-preview-src", previewImagePath);
     expect(screen.getByText("First item")).toBeInTheDocument();
     expect(screen.getByText("Second item")).toBeInTheDocument();
     expect(screen.getByText("Quote")).toBeInTheDocument();
@@ -81,7 +82,7 @@ describe("App", () => {
     render(<App />);
 
     const editor = screen.getByRole("textbox");
-    const fileInput = screen.getByLabelText(/Markdown/i);
+    const fileInput = screen.getByLabelText(/导入 Markdown/);
     const markdownFile = new File(["# Import Success\n\nThis came from a file."], "demo.md", {
       type: "text/markdown",
     });
@@ -108,6 +109,7 @@ describe("App", () => {
 
     mockPreviewImageLoading();
     vi.stubGlobal("fetch", fetchMock);
+    globalThis.fetch = fetchMock;
 
     class ClipboardItemMock {
       data: Record<string, Promise<Blob>>;
@@ -141,7 +143,7 @@ describe("App", () => {
     expect(fetchMock.mock.calls.some(([url]) => url === copiedImagePath)).toBe(true);
 
     const clipboardItem = write.mock.calls[0][0][0] as ClipboardItemMock;
-    const html = await (await clipboardItem.data["text/html"]).text();
+    const html = await readBlobAsText(await clipboardItem.data["text/html"]);
 
     expect(html).toContain("data:image/png;base64,");
     expect(html).toContain("cover");

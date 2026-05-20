@@ -5,6 +5,19 @@ import type { PreviewNode } from "./markdown";
 const seasonalCoverPath = "/__local-image?path=E%3A%2F%E7%B4%A0%E6%9D%90%E5%BA%93%2F%E6%98%A5%E5%AD%A3%2F%E5%B0%81%E9%9D%A2.png";
 const coverPath = "/__local-image?path=E%3A%2F%E7%B4%A0%E6%9D%90%2F%E5%B0%81%E9%9D%A2.png";
 
+async function readBlobAsText(blob: Blob): Promise<string> {
+  if (typeof blob.text === "function") {
+    return blob.text();
+  }
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsText(blob);
+  });
+}
+
 describe("wechatClipboard", () => {
   it("resolves windows absolute paths through the local image endpoint", () => {
     expect(resolvePreviewImageSrc("E:\\素材库\\春季\\封面.png")).toBe(seasonalCoverPath);
@@ -59,7 +72,7 @@ describe("wechatClipboard", () => {
 
     expect(write).toHaveBeenCalledTimes(1);
     const clipboardItem = write.mock.calls[0][0][0] as ClipboardItemMock;
-    expect(await (await clipboardItem.data["text/plain"]).text()).toBe("Body");
-    expect(await (await clipboardItem.data["text/html"]).text()).toContain("Body");
+    expect(await readBlobAsText(await clipboardItem.data["text/plain"])).toBe("Body");
+    expect(await readBlobAsText(await clipboardItem.data["text/html"])).toContain("Body");
   });
 });

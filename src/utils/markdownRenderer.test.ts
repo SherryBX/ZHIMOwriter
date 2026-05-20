@@ -12,11 +12,17 @@ describe("markdownRenderer", () => {
     expect(html).toContain("hljs-language-ts");
   });
 
-  it("preserves syntax highlighting when building wechat html", async () => {
+  it("preserves syntax highlighting when building wechat html (classic theme)", async () => {
     const html = await buildWechatHtml("```ts\nconst total = 1;\n```");
 
     expect(html).toContain("hljs-keyword");
-    expect(html).toContain("style=\"color:#c792ea;font-weight:600;\"");
+    expect(html).toContain("style=\"color:#c23616;font-weight:600;\"");
+  });
+
+  it("uses blackred accents when building wechat html with blackred theme", async () => {
+    const html = await buildWechatHtml("```ts\nconst total = 1;\n```", "blackred");
+
+    expect(html).toContain("style=\"color:#991b1b;font-weight:600;\"");
   });
 
   it("maps typora-style absolute image paths to the local image endpoint", () => {

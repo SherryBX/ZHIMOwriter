@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useRef } from "react";
 import { renderPreviewHtml } from "../../utils/markdownRenderer";
+import { isImageFailed, markImageFailed, markImageSuccess } from "../../utils/imagePath";
+import { defaultThemeId, type ThemeId } from "../../themes/themes";
 
 type PreviewPhoneProps = {
   markdown: string;
+  theme?: ThemeId;
 };
 
-function PreviewPhone({ markdown }: PreviewPhoneProps) {
+function PreviewPhone({ markdown, theme = defaultThemeId }: PreviewPhoneProps) {
   const articleRef = useRef<HTMLElement>(null);
-  const previewHtml = useMemo(() => renderPreviewHtml(markdown), [markdown]);
+  const previewHtml = useMemo(() => renderPreviewHtml(markdown, theme), [markdown, theme]);
 
   useEffect(() => {
     const article = articleRef.current;
@@ -25,14 +28,24 @@ function PreviewPhone({ markdown }: PreviewPhoneProps) {
         continue;
       }
 
+      const src = image.getAttribute("src") || "";
+
       const markLoaded = () => {
         wrapper.classList.remove("is-failed");
         image.style.removeProperty("display");
+        markImageSuccess(src);
       };
+
       const markFailed = () => {
         wrapper.classList.add("is-failed");
         image.style.setProperty("display", "none");
+        markImageFailed(src);
       };
+
+      if (isImageFailed(src)) {
+        markFailed();
+        continue;
+      }
 
       image.addEventListener("load", markLoaded);
       image.addEventListener("error", markFailed);
@@ -41,12 +54,10 @@ function PreviewPhone({ markdown }: PreviewPhoneProps) {
         image.removeEventListener("error", markFailed);
       });
 
-      wrapper.classList.remove("is-failed");
-
       if (image.complete) {
         if (image.naturalWidth > 0) {
           markLoaded();
-        } else {
+        } else if (image.naturalWidth === 0 && image.src) {
           markFailed();
         }
       }
@@ -69,6 +80,7 @@ function PreviewPhone({ markdown }: PreviewPhoneProps) {
       <article
         ref={articleRef}
         className="preview-phone__article"
+        data-theme={theme}
         dangerouslySetInnerHTML={{ __html: previewHtml }}
       />
     </div>

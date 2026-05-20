@@ -111,3 +111,9 @@ npm run build
 - **代码高亮**：highlight.js
 - **截图渲染**：html2canvas
 - **页面设计**：Vanilla CSS 极致磨砂玻璃微动效（Glassmorphic UI Design）
+
+---
+
+## 许可证
+
+本项目基于 [MIT License](LICENSE) 开源协议发布。

@@ -79,7 +79,11 @@ async function resolveWechatImageSrc(src: string) {
   const normalized = normalizeMarkdownImageSource(src);
 
   if (isLocalAbsoluteImagePath(normalized)) {
-    return inlineImageSrc(normalized);
+    try {
+      return await inlineImageSrc(normalized);
+    } catch {
+      return normalized;
+    }
   }
 
   if (isRemoteImageUrl(normalized)) {

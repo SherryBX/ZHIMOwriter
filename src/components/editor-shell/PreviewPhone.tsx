@@ -71,19 +71,12 @@ function PreviewPhone({ markdown, theme = defaultThemeId }: PreviewPhoneProps) {
   }, [previewHtml]);
 
   return (
-    <div className="preview-phone">
-      <div className="preview-phone__bar">
-        <span />
-        <span />
-        <span />
-      </div>
-      <article
-        ref={articleRef}
-        className="preview-phone__article"
-        data-theme={theme}
-        dangerouslySetInnerHTML={{ __html: previewHtml }}
-      />
-    </div>
+    <article
+      ref={articleRef}
+      className="preview-phone__article"
+      data-theme={theme}
+      dangerouslySetInnerHTML={{ __html: previewHtml }}
+    />
   );
 }
 

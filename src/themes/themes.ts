@@ -169,12 +169,12 @@ const blackredTheme: ThemeSpec = {
     "display:block;margin-top:8px;color:#7c7c75;font-size:12.5px;line-height:1.7;text-align:center;font-style:italic;font-family:'Noto Serif SC','Songti SC',STSong,Georgia,serif;",
   topTag:
     "display:inline-block;margin:0 0 32px;color:#0a0a0a;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:11px;letter-spacing:0.32em;text-transform:uppercase;",
-  headerContainer: "display:flex;align-items:center;justify-content:center;margin:0 0 32px;line-height:1;",
+  headerContainer: "display:block;text-align:center;margin:0 0 32px;line-height:1;",
   headerLine:
-    "flex:1;height:2px;background:rgba(153,27,27,0.22);",
+    "display:inline-block;vertical-align:middle;width:24%;height:2px;background:rgba(153,27,27,0.22);",
   headerText:
     "display:inline-block;vertical-align:middle;margin:0 12px;color:#991b1b;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:11px;letter-spacing:0.32em;text-transform:uppercase;",
-  footerContainer: "display:flex;align-items:center;justify-content:center;margin:32px 0 0;line-height:1;",
+  footerContainer: "display:block;text-align:center;margin:32px 0 0;line-height:1;",
   headerFooterVisible: true,
   topDividerVisible: false,
   topDivider: "",

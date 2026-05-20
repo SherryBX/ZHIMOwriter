@@ -169,8 +169,8 @@ export function renderPreviewHtml(markdown: string, themeId: ThemeId = "classic"
   const theme = getTheme(themeId);
 
   if (theme.headerFooterVisible) {
-    const header = `<div class="wechat-article__header"><span class="wechat-article__header-line"></span><span class="wechat-article__header-text">${topArticleLabel}</span><span class="wechat-article__header-line"></span></div>`;
-    const footer = `<div class="wechat-article__footer"><span class="wechat-article__header-line"></span><span class="wechat-article__header-text">END</span><span class="wechat-article__header-line"></span></div>`;
+    const header = `<div class="wechat-article__header"><span class="wechat-article__header-line">&#8203;</span><span class="wechat-article__header-text">${topArticleLabel}</span><span class="wechat-article__header-line">&#8203;</span></div>`;
+    const footer = `<div class="wechat-article__footer"><span class="wechat-article__header-line">&#8203;</span><span class="wechat-article__header-text">END</span><span class="wechat-article__header-line">&#8203;</span></div>`;
     return decoratePreviewMarkup(`${header}${content}${footer}`);
   }
 
@@ -186,8 +186,8 @@ export function renderStandardMarkdownHtml(markdown: string, themeId: ThemeId = 
   const theme = getTheme(themeId);
 
   if (theme.headerFooterVisible) {
-    const header = `<div class="wechat-article__header"><span class="wechat-article__header-line"></span><span class="wechat-article__header-text">${topArticleLabel}</span><span class="wechat-article__header-line"></span></div>`;
-    const footer = `<div class="wechat-article__footer"><span class="wechat-article__header-line"></span><span class="wechat-article__header-text">END</span><span class="wechat-article__header-line"></span></div>`;
+    const header = `<div class="wechat-article__header"><span class="wechat-article__header-line">&#8203;</span><span class="wechat-article__header-text">${topArticleLabel}</span><span class="wechat-article__header-line">&#8203;</span></div>`;
+    const footer = `<div class="wechat-article__footer"><span class="wechat-article__header-line">&#8203;</span><span class="wechat-article__header-text">END</span><span class="wechat-article__header-line">&#8203;</span></div>`;
     return `${header}${content}${footer}`;
   }
 

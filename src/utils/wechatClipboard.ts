@@ -272,6 +272,9 @@ async function decorateWechatHtml(html: string, theme: ThemeSpec) {
   applySyntaxHighlightInlineStyles(root, theme);
 
   for (const hr of root.querySelectorAll("hr")) {
+    if (hr.closest(".wechat-article__header") || hr.closest(".wechat-article__footer")) {
+      continue;
+    }
     if (theme.hrContent) {
       const replacement = doc.createElement("p");
       replacement.textContent = theme.hrContent;

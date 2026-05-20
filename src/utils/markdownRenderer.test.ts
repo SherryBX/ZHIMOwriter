@@ -45,4 +45,13 @@ describe("markdownRenderer", () => {
     expect(html).toContain(`data-preview-src="${typoraImagePath}"`);
     expect(html).not.toContain("file://localhost/D:/Typora/IMG/image-20260304144423930.png");
   });
+
+  it("preserves consecutive empty newlines in render output", () => {
+    const html = renderPreviewHtml("Paragraph A\n\n\n\nParagraph B", "classic");
+    
+    // 4 newlines = 2 spacer paragraphs
+    expect(html).toContain("<p>Paragraph A</p>");
+    expect(html).toContain("<p>&nbsp;</p>");
+    expect(html).toContain("<p>Paragraph B</p>");
+  });
 });

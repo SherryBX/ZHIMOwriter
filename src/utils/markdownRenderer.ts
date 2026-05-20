@@ -145,7 +145,9 @@ const fileUrlPattern = /(!\[[^\]]*\]\()(file:(\/\/\/|\/\/localhost\/|\/)[A-Za-z]
 const windowsBackslashPattern = /(!\[[^\]]*\]\()([A-Za-z]:[\\/][^)]+)(\))/gi;
 
 export function normalizeMarkdownForRender(markdown: string) {
-  return markdown
+  const normalized = markdown
+    .replace(/\r\n/g, "\n")
+    .replace(/^[ \t]+$/gm, "")
     .replace(fileUrlPattern, (_match, prefix, src, _protocol, suffix) => {
       const normalized = normalizeMarkdownImageSource(src);
       return `${prefix}${normalized}${suffix}`;
@@ -154,6 +156,10 @@ export function normalizeMarkdownForRender(markdown: string) {
       const normalized = normalizeMarkdownImageSource(src);
       return `${prefix}${normalized}${suffix}`;
     });
+
+  return normalized.replace(/\n{3,}/g, (match) => {
+    return "\n\n" + "&nbsp;\n\n".repeat(match.length - 2);
+  });
 }
 
 

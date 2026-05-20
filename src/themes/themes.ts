@@ -100,12 +100,12 @@ export const classicTheme: ThemeSpec = {
     "display:block;margin-top:8px;color:#8a8a82;font-size:12px;line-height:1.7;text-align:center;font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;",
   topTag:
     "display:block;margin:0 0 18px;color:#C23616;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:12px;letter-spacing:0.28em;text-transform:uppercase;",
-  headerContainer: "display:block;text-align:center;margin:0 0 32px;line-height:1;",
+  headerContainer: "width:100%;margin:0 0 32px;border-collapse:collapse;border:none;line-height:1;",
   headerLine:
-    "display:inline-block;vertical-align:middle;width:24%;border-top:2px solid rgba(194,54,22,0.22);height:0;line-height:0;font-size:0;overflow:hidden;",
+    "width:24%;padding:0;height:0;border-top:2px solid rgba(194,54,22,0.22);line-height:0;font-size:0;overflow:hidden;",
   headerText:
-    "display:inline-block;vertical-align:middle;margin:0 12px;color:#C23616;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:11px;letter-spacing:0.32em;text-transform:uppercase;",
-  footerContainer: "display:block;text-align:center;margin:32px 0 0;line-height:1;",
+    "text-align:center;padding:0 12px;white-space:nowrap;color:#C23616;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:11px;letter-spacing:0.32em;text-transform:uppercase;vertical-align:middle;",
+  footerContainer: "width:100%;margin:32px 0 0;border-collapse:collapse;border:none;line-height:1;",
   headerFooterVisible: false,
   topDividerVisible: true,
   topDivider: "margin:0 0 16px;",
@@ -169,12 +169,12 @@ const blackredTheme: ThemeSpec = {
     "display:block;margin-top:8px;color:#7c7c75;font-size:12.5px;line-height:1.7;text-align:center;font-style:italic;font-family:'Noto Serif SC','Songti SC',STSong,Georgia,serif;",
   topTag:
     "display:inline-block;margin:0 0 32px;color:#0a0a0a;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:11px;letter-spacing:0.32em;text-transform:uppercase;",
-  headerContainer: "display:block;text-align:center;margin:0 0 32px;line-height:1;",
+  headerContainer: "width:100%;margin:0 0 32px;border-collapse:collapse;border:none;line-height:1;",
   headerLine:
-    "display:inline-block;vertical-align:middle;width:24%;border-top:2px solid rgba(153,27,27,0.22);height:0;line-height:0;font-size:0;overflow:hidden;",
+    "width:24%;padding:0;height:0;border-top:2px solid rgba(153,27,27,0.22);line-height:0;font-size:0;overflow:hidden;",
   headerText:
-    "display:inline-block;vertical-align:middle;margin:0 12px;color:#991b1b;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:11px;letter-spacing:0.32em;text-transform:uppercase;",
-  footerContainer: "display:block;text-align:center;margin:32px 0 0;line-height:1;",
+    "text-align:center;padding:0 12px;white-space:nowrap;color:#991b1b;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:11px;letter-spacing:0.32em;text-transform:uppercase;vertical-align:middle;",
+  footerContainer: "width:100%;margin:32px 0 0;border-collapse:collapse;border:none;line-height:1;",
   headerFooterVisible: true,
   topDividerVisible: false,
   topDivider: "",

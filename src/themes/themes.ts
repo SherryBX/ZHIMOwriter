@@ -104,7 +104,7 @@ export const classicTheme: ThemeSpec = {
   headerLine:
     "margin:0;border:none;border-top:2px solid rgba(194,54,22,0.22);width:100%;",
   headerText:
-    "text-align:center;padding:0 12px;white-space:nowrap;color:#C23616;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:11px;letter-spacing:0.32em;text-transform:uppercase;vertical-align:middle;",
+    "text-align:center;padding:0 6px;white-space:nowrap;color:#C23616;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:11px;letter-spacing:0.32em;text-transform:uppercase;vertical-align:middle;",
   footerContainer: "width:100%;margin:32px 0 0;border-collapse:collapse;border:none;line-height:1;",
   headerFooterVisible: false,
   topDividerVisible: true,
@@ -173,7 +173,7 @@ const blackredTheme: ThemeSpec = {
   headerLine:
     "margin:0;border:none;border-top:2px solid rgba(153,27,27,0.22);width:100%;",
   headerText:
-    "text-align:center;padding:0 12px;white-space:nowrap;color:#991b1b;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:11px;letter-spacing:0.32em;text-transform:uppercase;vertical-align:middle;",
+    "text-align:center;padding:0 6px;white-space:nowrap;color:#991b1b;font-family:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;font-size:11px;letter-spacing:0.32em;text-transform:uppercase;vertical-align:middle;",
   footerContainer: "width:100%;margin:32px 0 0;border-collapse:collapse;border:none;line-height:1;",
   headerFooterVisible: true,
   topDividerVisible: false,

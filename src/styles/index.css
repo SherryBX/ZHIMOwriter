@@ -352,7 +352,7 @@ button {
 }
 
 .preview-phone__article[data-theme="blackred"] .wechat-article__header-line {
-  width: 38%;
+  width: 41%;
   padding: 0;
   vertical-align: middle;
 }
@@ -366,7 +366,7 @@ button {
 
 .preview-phone__article[data-theme="blackred"] .wechat-article__header-text {
   text-align: center;
-  padding: 0 12px !important;
+  padding: 0 6px !important;
   white-space: nowrap;
   color: #991b1b;
   font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;

@@ -228,25 +228,12 @@ button {
   font-size: 16px;
   line-height: 2.2;
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border-strong) transparent;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .markdown-editor::-webkit-scrollbar {
-  width: 8px;
-}
-
-.markdown-editor::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.01);
-}
-
-.markdown-editor::-webkit-scrollbar-thumb {
-  background-color: var(--border-strong);
-  border-radius: 4px;
-}
-
-.markdown-editor::-webkit-scrollbar-thumb:hover {
-  background-color: var(--accent);
+  display: none;
 }
 
 .preview-surface__content {
@@ -256,12 +243,30 @@ button {
   padding: 32px;
   background: transparent;
   overflow-y: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  direction: rtl; /* 将滚动条挪到左侧，即中间交界线 */
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.preview-surface__content > * {
+  direction: ltr; /* 将内部内容重置为从左往右正常排版 */
 }
 
 .preview-surface__content::-webkit-scrollbar {
-  display: none;
+  width: 8px;
+}
+
+.preview-surface__content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.01);
+}
+
+.preview-surface__content::-webkit-scrollbar-thumb {
+  background-color: var(--border-strong);
+  border-radius: 4px;
+}
+
+.preview-surface__content::-webkit-scrollbar-thumb:hover {
+  background-color: var(--accent);
 }
 
 .preview-phone {

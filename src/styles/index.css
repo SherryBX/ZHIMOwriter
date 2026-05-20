@@ -354,10 +354,17 @@ button {
 .preview-phone__article[data-theme="blackred"] .wechat-article__header-line {
   width: 24%;
   padding: 0;
-  height: 0;
+  vertical-align: middle;
+}
+
+.preview-phone__article[data-theme="blackred"] .wechat-article__header-line-inner {
   border: none !important;
   border-top: 2px solid rgba(153, 27, 27, 0.22) !important;
-  vertical-align: middle;
+  height: 0;
+  line-height: 0;
+  font-size: 0;
+  overflow: hidden;
+  margin: 0;
 }
 
 .preview-phone__article[data-theme="blackred"] .wechat-article__header-text {
